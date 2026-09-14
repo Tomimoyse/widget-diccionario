@@ -22,6 +22,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".FavoritasActivity"
+            android:exported="false"
+            android:label="@string/favoritas_titulo" />
+
         <receiver
             android:name=".widget.PalabraWidgetProvider"
             android:exported="false">

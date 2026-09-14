@@ -3,4 +3,5 @@
     <color name="widget_fondo">#FFFBF5</color>
     <color name="widget_texto">#1F1B16</color>
     <color name="widget_texto_secundario">#6B5E4F</color>
+    <color name="estrella_favorita">#E0A100</color>
 </resources>

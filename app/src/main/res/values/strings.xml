@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="Typos">
+    <string name="app_name">Palabra del momento</string>
+    <string name="widget_descripcion">Una palabra aleatoria en español con su definición, que cambia cada vez que apagas la pantalla.</string>
+    <string name="widget_palabra_ejemplo">serendipia</string>
+    <string name="widget_categoria_ejemplo">f.</string>
+    <string name="widget_definicion_ejemplo">Hallazgo valioso que se produce de manera accidental o casual.</string>
+
+    <string name="main_titulo">Palabra del momento</string>
+    <string name="main_switch_desc">La palabra del widget cambia cada vez que apagas la pantalla, así ya está lista al encenderla. Si lo desactivas, cambia al tocar el widget o cada 30 minutos.</string>
+    <string name="main_switch_notificacion">Mostrar la palabra en la notificación</string>
+    <string name="main_switch_notificacion_desc">Así también la ves en la pantalla de bloqueo. Si la desactivas queda una notificación mínima y oculta, porque Android la exige mientras la app trabaja en segundo plano.</string>
+
+    <string name="main_boton_detener">Detener la app</string>
+    <string name="main_boton_detener_desc">Cierra la app y su proceso en segundo plano. Tus ajustes se conservan: vuelve a funcionar al abrir la app, tocar el widget o reiniciar el teléfono.</string>
+    <string name="detener_titulo">¿Detener la app?</string>
+    <string name="detener_mensaje">Se detiene el servicio en segundo plano, desaparece la notificación y se cierra la app. Hasta que la vuelvas a abrir, toques el widget o reinicies el teléfono, la palabra no cambiará al apagar la pantalla.</string>
+    <string name="detener_confirmar">Detener</string>
+    <string name="detener_cancelar">Cancelar</string>
+
+    <string name="ayuda_boton">\?</string>
+    <string name="ayuda_descripcion">Ayuda: qué activar para que la app funcione</string>
+    <string name="ayuda_titulo">Qué activar para que funcione</string>
+    <string name="ayuda_ok">✅</string>
+    <string name="ayuda_revisar">⚠️</string>
+    <string name="ayuda_info">ℹ️</string>
+    <string name="ayuda_pantalla">%1$s &lt;b&gt;Cambiar la palabra al apagar la pantalla&lt;/b&gt;: el interruptor de esta pantalla debe estar activado.</string>
+    <string name="ayuda_permiso">%1$s &lt;b&gt;Permiso de notificaciones&lt;/b&gt;: necesario para ver la palabra en la notificación. Ajustes → Aplicaciones → Palabra del momento → Notificaciones.</string>
+    <string name="ayuda_bateria">%1$s &lt;b&gt;Batería sin restricciones&lt;/b&gt;: evita que Android detenga la app en segundo plano. Ajustes → Aplicaciones → Palabra del momento → Batería → Sin restricciones.</string>
+    <string name="ayuda_widget">%1$s &lt;b&gt;Widget en la pantalla de inicio&lt;/b&gt;: mantén pulsado un espacio vacío de la pantalla de inicio → Widgets → Palabra del momento.</string>
+    <string name="ayuda_bloqueo">%1$s &lt;b&gt;Palabra en la pantalla de bloqueo&lt;/b&gt;: Ajustes → Pantalla de bloqueo y AOD → Notificaciones → estilo «Detalles» y «Mostrar contenido» activado.</string>
+    <string name="ayuda_reactivar">%1$s &lt;b&gt;Si el widget deja de cambiar&lt;/b&gt;: tócalo una vez o abre esta app para reactivar el servicio. Tras reiniciar el teléfono se reactiva solo.</string>
+    <string name="ayuda_abrir_ajustes">Ajustes de la app</string>
+    <string name="ayuda_cerrar">Entendido</string>
+    <string name="main_switch">Cambiar la palabra al apagar la pantalla</string>
+    <string name="main_atribucion">Definiciones de Wikcionario (https://es.wiktionary.org), disponibles bajo la licencia CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/). Extraídas con Wiktextract (https://kaikki.org).</string>
+    <string name="main_boton_nueva">Otra palabra</string>
+
+    <string name="notif_canal">Palabra actual</string>
+    <string name="notif_canal_desc">Muestra la palabra del momento, también en la pantalla de bloqueo. Es necesaria para cambiarla al apagar la pantalla.</string>
+    <string name="notif_texto">Buscando una palabra…</string>
+    <string name="notif_canal_minimo">Servicio en segundo plano</string>
+    <string name="notif_canal_minimo_desc">Notificación mínima que Android exige mientras la palabra se cambia al apagar la pantalla.</string>
+    <string name="notif_texto_minimo">Cambiando la palabra al apagar la pantalla</string>
+</resources>

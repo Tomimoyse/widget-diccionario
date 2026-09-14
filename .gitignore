@@ -6,3 +6,6 @@ local.properties
 .kotlin/
 captures/
 __pycache__/
+keystore.properties
+*.jks
+*.keystore

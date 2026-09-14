@@ -1,4 +1,4 @@
-# Palabra del momento
+# Polimatía
 
 App Android con un widget que muestra una palabra en español y su definición. La palabra cambia cada
 vez que apagas la pantalla, así que al volver a encenderla ya tienes una nueva esperando.
@@ -48,7 +48,7 @@ Guárdalo **fuera del proyecto**:
 mkdir -p ~/keystores && chmod 700 ~/keystores
 keytool -genkeypair -v -keystore ~/keystores/widget-diccionario-release.jks -storetype PKCS12 \
   -alias palabra-del-momento -keyalg RSA -keysize 4096 -validity 10000 \
-  -dname "CN=Tu nombre, O=Palabra del momento"
+  -dname "CN=Tu nombre, O=Polimatía"
 ```
 
 ### 2. Configurar la firma
@@ -94,8 +94,8 @@ Para que todo funcione, en la app:
 
 1. Activa **«Cambiar la palabra al apagar la pantalla»** y acepta el permiso de notificaciones.
 2. Coloca el widget: mantén pulsado un espacio vacío de la pantalla de inicio → Widgets →
-   Palabra del momento.
-3. Pon la batería de la app en **Sin restricciones** (Ajustes → Aplicaciones → Palabra del momento →
+   Polimatía.
+3. Pon la batería de la app en **Sin restricciones** (Ajustes → Aplicaciones → Polimatía →
    Batería). Si no, algunos fabricantes detienen la app tras unos días sin abrirla.
 4. Para ver la palabra en la pantalla de bloqueo, las notificaciones del bloqueo tienen que mostrar
    contenido. En Samsung: Ajustes → Pantalla de bloqueo y AOD → Notificaciones → estilo «Detalles».

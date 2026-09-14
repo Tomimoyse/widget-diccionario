@@ -35,6 +35,59 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 
 También se puede abrir la carpeta con Android Studio y ejecutar desde ahí.
 
+## APK de release firmada
+
+La APK de release está optimizada con R8 (unos 5,8 MB frente a 8,6 MB de la de depuración) y va
+firmada con una clave propia. Es la que conviene compartir.
+
+### 1. Crear el keystore (solo la primera vez)
+
+Guárdalo **fuera del proyecto**:
+
+```bash
+mkdir -p ~/keystores && chmod 700 ~/keystores
+keytool -genkeypair -v -keystore ~/keystores/widget-diccionario-release.jks -storetype PKCS12 \
+  -alias palabra-del-momento -keyalg RSA -keysize 4096 -validity 10000 \
+  -dname "CN=Tu nombre, O=Palabra del momento"
+```
+
+### 2. Configurar la firma
+
+Crea `keystore.properties` en la raíz del proyecto. El archivo está en `.gitignore`, igual que
+`*.jks` y `*.keystore`.
+
+```properties
+storeFile=/home/usuario/keystores/widget-diccionario-release.jks
+storePassword=la-contraseña-del-keystore
+keyAlias=palabra-del-momento
+keyPassword=la-contraseña-del-keystore
+```
+
+En un keystore PKCS12 la contraseña de la clave es la misma que la del keystore. Protege el archivo
+con `chmod 600 keystore.properties`.
+
+Si `keystore.properties` no existe, la build de release no falla: genera
+`app-release-unsigned.apk`, que no se puede instalar.
+
+### 3. Compilar
+
+```bash
+./gradlew assembleRelease      # APK en app/build/outputs/apk/release/app-release.apk
+$ANDROID_HOME/build-tools/36.0.0/apksigner verify --print-certs \
+  app/build/outputs/apk/release/app-release.apk   # comprobar la firma
+```
+
+### Antes de publicar una versión nueva
+
+- **Sube `versionCode`** (y si quieres `versionName`) en `app/build.gradle.kts`. Android no instala
+  una actualización con un `versionCode` igual o menor.
+- **Firma siempre con el mismo keystore.** Una APK firmada con otra clave no se instala encima de la
+  anterior: hay que desinstalar, y se pierden los ajustes. Por lo mismo, la release y la build de
+  depuración no se pueden instalar una encima de la otra.
+
+> ⚠️ **Respalda el keystore y `keystore.properties` fuera de la PC** (gestor de contraseñas, pendrive).
+> Si se pierden, no se pueden publicar actualizaciones de la app ya instalada.
+
 ## Configuración en el teléfono
 
 Para que todo funcione, en la app:

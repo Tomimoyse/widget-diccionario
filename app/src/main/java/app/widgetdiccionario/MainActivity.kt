@@ -17,6 +17,7 @@ import android.text.Html
 import android.widget.Button
 import android.widget.Switch
 import android.widget.TextView
+import app.widgetdiccionario.data.Favoritas
 import app.widgetdiccionario.pantalla.NotificacionPalabra
 import app.widgetdiccionario.pantalla.PantallaService
 import app.widgetdiccionario.widget.ActualizadorWidget
@@ -59,6 +60,9 @@ class MainActivity : Activity() {
         findViewById<Button>(R.id.boton_nueva).setOnClickListener { mostrarOtra() }
         findViewById<Button>(R.id.boton_ayuda).setOnClickListener { mostrarAyuda() }
         findViewById<Button>(R.id.boton_detener).setOnClickListener { confirmarDetener() }
+        findViewById<Button>(R.id.boton_favoritas).setOnClickListener {
+            startActivity(Intent(this, FavoritasActivity::class.java))
+        }
         mostrarOtra()
 
         switchPantalla.isChecked = Ajustes.actualizarAlApagar(this)
@@ -84,6 +88,12 @@ class MainActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
+        scope.launch {
+            val cantidad = Favoritas.contar(this@MainActivity)
+            findViewById<Button>(R.id.boton_favoritas).text =
+                if (cantidad == 0) getString(R.string.main_boton_favoritas)
+                else getString(R.string.main_boton_favoritas_cantidad, cantidad)
+        }
         // Desde una Activity visible el arranque en primer plano siempre está permitido.
         PantallaService.iniciarSiCorresponde(this)
     }

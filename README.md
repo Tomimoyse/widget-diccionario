@@ -7,6 +7,8 @@ vez que apagas la pantalla, así que al volver a encenderla ya tienes una nueva 
 
 - **Widget** translúcido para la pantalla de inicio, con colores dinámicos del sistema. Al tocarlo
   muestra otra palabra.
+- **Favoritas**: la estrella del widget guarda la palabra que estás viendo, y la app tiene una
+  sección con todas las marcadas.
 - **Cambio al apagar la pantalla** mediante un servicio en primer plano.
 - **Notificación con la palabra**, que también se ve en la pantalla de bloqueo. Se puede reducir a
   una notificación mínima desde la app.
@@ -116,6 +118,9 @@ El botón `?` de la app muestra cuáles de estos puntos están activos.
   del diccionario.
 - **Base de datos.** SQLite de solo lectura con Room, precargada desde
   `app/src/main/assets/databases/diccionario.db`.
+- **Favoritas.** Van en una base aparte (`favoritas.db`) y cada una guarda su propia copia de la
+  palabra, la categoría y la definición. La base del diccionario se reemplaza entera al actualizarlo,
+  y los ids cambian; así las favoritas no se pierden.
 
 ## Limitaciones conocidas
 
@@ -131,8 +136,9 @@ El botón `?` de la app muestra cuáles de estos puntos están activos.
 ```
 app/src/main/java/app/widgetdiccionario/
 ├── MainActivity.kt              Pantalla principal, ayuda y botón de detener
+├── FavoritasActivity.kt         Lista de palabras favoritas
 ├── Ajustes.kt                   Preferencias y estado del mazo
-├── data/                        Room (Palabra, PalabraDao, DiccionarioDatabase) y Mazo
+├── data/                        Room (diccionario y favoritas), Favoritas y Mazo
 ├── pantalla/                    PantallaService, NotificacionPalabra, ArranqueReceiver
 └── widget/                      PalabraWidgetProvider y ActualizadorWidget
 app/src/test/                    Tests del mazo
@@ -152,9 +158,10 @@ python3 tools/build_db.py               # combina semilla + Wikcionario en dicci
 ```
 
 Después sube `DiccionarioDatabase.VERSION` y `DB_VERSION` en `tools/build_db.py`, que tienen que
-coincidir, para que Room reemplace la base ya instalada. Si una palabra aparece en varios TSV, gana
-la primera aparición. Para agregar palabras propias, edita `tools/palabras_semilla.tsv`
-(`palabra<TAB>categoría<TAB>definición`).
+coincidir, para que Room reemplace la base ya instalada. Las favoritas no se ven afectadas.
+
+Si una palabra aparece en varios TSV, gana la primera aparición. Para agregar palabras propias, edita
+`tools/palabras_semilla.tsv` (`palabra<TAB>categoría<TAB>definición`).
 
 ## Cambiar el icono
 

@@ -11,6 +11,7 @@ import android.widget.RemoteViews
 import app.widgetdiccionario.Ajustes
 import app.widgetdiccionario.R
 import app.widgetdiccionario.data.DiccionarioDatabase
+import app.widgetdiccionario.data.Favoritas
 import app.widgetdiccionario.data.Mazo
 import app.widgetdiccionario.data.Palabra
 import app.widgetdiccionario.pantalla.NotificacionPalabra
@@ -24,6 +25,8 @@ import kotlinx.coroutines.sync.withLock
 import kotlin.random.Random
 
 object ActualizadorWidget {
+
+    private const val CODIGO_FAVORITA = 1
 
     /** Serializa los avances del mazo (apagado de pantalla, toque y app pueden coincidir). */
     private val mutexMazo = Mutex()
@@ -65,10 +68,11 @@ object ActualizadorWidget {
         return Ajustes.EstadoMazo(clave, total, posicion = 0)
     }
 
-    fun mostrar(context: Context, palabra: Palabra, ids: IntArray = idsWidgets(context)) {
+    suspend fun mostrar(context: Context, palabra: Palabra, ids: IntArray = idsWidgets(context)) {
         Ajustes.setUltimaPalabraId(context, palabra.id)
         if (ids.isNotEmpty()) {
-            AppWidgetManager.getInstance(context).updateAppWidget(ids, vistas(context, palabra))
+            val favorita = Favoritas.esFavorita(context, palabra)
+            AppWidgetManager.getInstance(context).updateAppWidget(ids, vistas(context, palabra, favorita))
         }
         NotificacionPalabra.actualizar(context, palabra)
     }
@@ -77,7 +81,7 @@ object ActualizadorWidget {
     suspend fun palabraActual(context: Context): Palabra? =
         Ajustes.ultimaPalabraId(context)?.let { DiccionarioDatabase.get(context).palabraDao().porId(it) }
 
-    private fun vistas(context: Context, palabra: Palabra) =
+    private fun vistas(context: Context, palabra: Palabra, favorita: Boolean) =
         RemoteViews(context.packageName, R.layout.widget_palabra).apply {
             setTextViewText(R.id.palabra, palabra.palabra)
             setTextViewText(R.id.definicion, palabra.definicion)
@@ -88,7 +92,32 @@ object ActualizadorWidget {
                 setTextViewText(R.id.categoria, palabra.categoria)
             }
             setOnClickPendingIntent(android.R.id.background, intentRefrescar(context))
+            setImageViewResource(R.id.estrella, if (favorita) R.drawable.ic_estrella_llena else R.drawable.ic_estrella_vacia)
+            setContentDescription(
+                R.id.estrella,
+                context.getString(if (favorita) R.string.favorita_quitar else R.string.favorita_marcar),
+            )
+            // El toque en la estrella tiene su propio PendingIntent, que prevalece sobre el del fondo.
+            setOnClickPendingIntent(R.id.estrella, intentFavorita(context, palabra))
         }
+
+    /** Lleva el id de la palabra pintada: si cambia antes del toque, se marca la que el usuario veía. */
+    private fun intentFavorita(context: Context, palabra: Palabra): PendingIntent =
+        PendingIntent.getBroadcast(
+            context,
+            CODIGO_FAVORITA,
+            Intent(context, PalabraWidgetProvider::class.java)
+                .setAction(PalabraWidgetProvider.ACCION_FAVORITA)
+                .putExtra(PalabraWidgetProvider.EXTRA_PALABRA_ID, palabra.id),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+
+    /** Alterna la favorita de la palabra con [id] y repinta si sigue siendo la que se muestra. */
+    suspend fun alternarFavorita(context: Context, id: Int) {
+        val palabra = DiccionarioDatabase.get(context).palabraDao().porId(id) ?: return
+        Favoritas.alternar(context, palabra)
+        if (Ajustes.ultimaPalabraId(context) == id) mostrar(context, palabra)
+    }
 
     /** Vuelve a pintar la palabra actual (p. ej. para que el toque use el PendingIntent adecuado). */
     suspend fun repintar(context: Context) {

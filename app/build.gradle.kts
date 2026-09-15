@@ -19,8 +19,8 @@ android {
         applicationId = "app.widgetdiccionario"
         minSdk = 26
         targetSdk = 36
-        versionCode = 6
-        versionName = "1.3-wip.2"
+        versionCode = 7
+        versionName = "1.3"
     }
 
     signingConfigs {

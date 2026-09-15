@@ -14,6 +14,7 @@ import android.os.PowerManager
 import android.os.Process
 import android.provider.Settings
 import android.text.Html
+import android.view.View
 import android.widget.Button
 import android.widget.Switch
 import android.widget.TextView
@@ -39,6 +40,7 @@ class MainActivity : Activity() {
         setContentView(R.layout.activity_main)
 
         val vistaPalabra = findViewById<TextView>(R.id.vista_palabra)
+        val vistaCategoria = findViewById<TextView>(R.id.vista_categoria)
         val vistaDefinicion = findViewById<TextView>(R.id.vista_definicion)
         val switchPantalla = findViewById<Switch>(R.id.switch_pantalla)
         val switchNotificacion = findViewById<Switch>(R.id.switch_notificacion)
@@ -46,7 +48,8 @@ class MainActivity : Activity() {
 
         fun mostrarOtra() = scope.launch {
             val palabra = ActualizadorWidget.siguientePalabra(this@MainActivity) ?: return@launch
-            vistaPalabra.text = listOfNotNull(palabra.palabra, palabra.categoria).joinToString("  ")
+            vistaPalabra.text = palabra.palabra
+            vistaCategoria.text = palabra.categoria?.takeIf { it.isNotBlank() }?.let { "· $it" }.orEmpty()
             vistaDefinicion.text = palabra.definicion
             ActualizadorWidget.mostrar(this@MainActivity, palabra)
         }
@@ -62,6 +65,12 @@ class MainActivity : Activity() {
         findViewById<Button>(R.id.boton_detener).setOnClickListener { confirmarDetener() }
         findViewById<Button>(R.id.boton_favoritas).setOnClickListener {
             startActivity(Intent(this, FavoritasActivity::class.java))
+        }
+        findViewById<View>(R.id.fila_estilo).setOnClickListener {
+            startActivity(Intent(this, EstiloWidgetActivity::class.java))
+        }
+        findViewById<View>(R.id.fila_tutorial).setOnClickListener {
+            startActivity(Intent(this, TutorialBloqueoActivity::class.java))
         }
         mostrarOtra()
 

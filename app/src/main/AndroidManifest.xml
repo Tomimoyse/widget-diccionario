@@ -27,6 +27,16 @@
             android:exported="false"
             android:label="@string/favoritas_titulo" />
 
+        <activity
+            android:name=".EstiloWidgetActivity"
+            android:exported="false"
+            android:label="@string/main_fila_estilo" />
+
+        <activity
+            android:name=".TutorialBloqueoActivity"
+            android:exported="false"
+            android:label="@string/main_fila_tutorial" />
+
         <receiver
             android:name=".widget.PalabraWidgetProvider"
             android:exported="false">

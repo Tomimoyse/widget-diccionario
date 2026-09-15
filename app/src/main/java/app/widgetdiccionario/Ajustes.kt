@@ -2,6 +2,7 @@ package app.widgetdiccionario
 
 import android.content.Context
 import androidx.core.content.edit
+import app.widgetdiccionario.widget.EstiloWidget
 
 object Ajustes {
     private const val ARCHIVO = "ajustes"
@@ -11,6 +12,10 @@ object Ajustes {
     private const val CLAVE_MAZO_CLAVE = "mazo_clave"
     private const val CLAVE_MAZO_TOTAL = "mazo_total"
     private const val CLAVE_MAZO_POSICION = "mazo_posicion"
+    private const val CLAVE_ESTILO_FONDO = "estilo_color_fondo"
+    private const val CLAVE_ESTILO_TRANSPARENCIA = "estilo_transparencia"
+    private const val CLAVE_ESTILO_TEXTO = "estilo_color_texto"
+    private const val CLAVE_ESTILO_ESCALA = "estilo_escala_texto"
 
     /** Estado de la baraja en curso: [total] 0 significa que todavía no hay ninguna. */
     data class EstadoMazo(val clave: Long, val total: Int, val posicion: Int)
@@ -42,6 +47,23 @@ object Ajustes {
         putLong(CLAVE_MAZO_CLAVE, estado.clave)
         putInt(CLAVE_MAZO_TOTAL, estado.total)
         putInt(CLAVE_MAZO_POSICION, estado.posicion)
+    }
+
+    fun estiloWidget(context: Context): EstiloWidget = prefs(context).run {
+        val base = EstiloWidget.PREDETERMINADO
+        EstiloWidget(
+            colorFondo = if (contains(CLAVE_ESTILO_FONDO)) getInt(CLAVE_ESTILO_FONDO, 0) else null,
+            transparencia = getInt(CLAVE_ESTILO_TRANSPARENCIA, base.transparencia),
+            colorTexto = if (contains(CLAVE_ESTILO_TEXTO)) getInt(CLAVE_ESTILO_TEXTO, 0) else null,
+            escalaTexto = getInt(CLAVE_ESTILO_ESCALA, base.escalaTexto),
+        )
+    }
+
+    fun setEstiloWidget(context: Context, estilo: EstiloWidget) = prefs(context).edit {
+        estilo.colorFondo?.let { putInt(CLAVE_ESTILO_FONDO, it) } ?: remove(CLAVE_ESTILO_FONDO)
+        putInt(CLAVE_ESTILO_TRANSPARENCIA, estilo.transparencia)
+        estilo.colorTexto?.let { putInt(CLAVE_ESTILO_TEXTO, it) } ?: remove(CLAVE_ESTILO_TEXTO)
+        putInt(CLAVE_ESTILO_ESCALA, estilo.escalaTexto)
     }
 
     private fun prefs(context: Context) =

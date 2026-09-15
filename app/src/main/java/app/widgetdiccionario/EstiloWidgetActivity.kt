@@ -11,20 +11,28 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.core.graphics.toColorInt
 import app.widgetdiccionario.data.Favoritas
 import app.widgetdiccionario.widget.ActualizadorWidget
 import app.widgetdiccionario.widget.EstiloWidget
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
-/** Personalización del widget con vista previa en vivo. Cada cambio se guarda y se aplica al widget. */
+/**
+ * Personalización del widget con vista previa en vivo. Los cambios solo se guardan y se aplican al widget
+ * al tocar «Confirmar»; si se sale antes, se descartan.
+ */
 class EstiloWidgetActivity : Activity() {
 
     private val scope = MainScope()
     private lateinit var estilo: EstiloWidget
+    private lateinit var guardado: EstiloWidget
     private lateinit var vistaPrevia: View
     private var favoritaEnVistaPrevia = false
 
@@ -54,7 +62,8 @@ class EstiloWidgetActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_estilo_widget)
-        estilo = Ajustes.estiloWidget(this)
+        guardado = Ajustes.estiloWidget(this)
+        estilo = guardado
 
         val contenedor = findViewById<FrameLayout>(R.id.vista_previa)
         vistaPrevia = LayoutInflater.from(this).inflate(R.layout.widget_palabra, contenedor, false)
@@ -85,8 +94,9 @@ class EstiloWidgetActivity : Activity() {
             findViewById<SeekBar>(R.id.barra_transparencia).progress = estilo.transparencia
             findViewById<SeekBar>(R.id.barra_tamano).progress =
                 (estilo.escalaTexto - EstiloWidget.ESCALA_MINIMA) / PASO_ESCALA
-            guardar()
+            refrescar()
         }
+        findViewById<View>(R.id.boton_confirmar).setOnClickListener { confirmar() }
         refrescar()
     }
 
@@ -95,7 +105,7 @@ class EstiloWidgetActivity : Activity() {
         super.onDestroy()
     }
 
-    /** La vista previa se actualiza mientras se arrastra; el widget, al soltar. */
+    /** Solo actualiza la vista previa: el widget cambia al confirmar. */
     private fun alMover(alCambiar: (Int) -> Unit) = object : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(barra: SeekBar, valor: Int, delUsuario: Boolean) {
             if (!delUsuario) return
@@ -104,13 +114,17 @@ class EstiloWidgetActivity : Activity() {
         }
 
         override fun onStartTrackingTouch(barra: SeekBar) = Unit
-        override fun onStopTrackingTouch(barra: SeekBar) = guardar()
+        override fun onStopTrackingTouch(barra: SeekBar) = Unit
     }
 
-    private fun guardar() {
+    private fun confirmar() {
         Ajustes.setEstiloWidget(this, estilo)
-        refrescar()
-        scope.launch { ActualizadorWidget.repintar(this@EstiloWidgetActivity) }
+        guardado = estilo
+        // El repintado no depende de esta pantalla, que se cierra enseguida.
+        val app = applicationContext
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch { ActualizadorWidget.repintar(app) }
+        Toast.makeText(this, R.string.estilo_aplicado, Toast.LENGTH_SHORT).show()
+        finish()
     }
 
     private fun refrescar() {
@@ -119,12 +133,18 @@ class EstiloWidgetActivity : Activity() {
         findViewById<TextView>(R.id.valor_tamano).text = getString(R.string.estilo_porcentaje, estilo.escalaTexto)
         pintarMuestras(findViewById(R.id.colores_fondo), coloresFondo, estilo.colorFondo) { color ->
             estilo = estilo.copy(colorFondo = color)
-            guardar()
+            refrescar()
         }
         pintarMuestras(findViewById(R.id.colores_texto), coloresTexto, estilo.colorTexto) { color ->
             estilo = estilo.copy(colorTexto = color)
-            guardar()
+            refrescar()
         }
+        val hayCambios = estilo != guardado
+        findViewById<View>(R.id.boton_confirmar).apply {
+            isEnabled = hayCambios
+            alpha = if (hayCambios) 1f else 0.4f
+        }
+        findViewById<View>(R.id.estilo_pendiente).visibility = if (hayCambios) View.VISIBLE else View.INVISIBLE
     }
 
     private fun pintarMuestras(fila: LinearLayout, muestras: List<Muestra>, elegido: Int?, alElegir: (Int?) -> Unit) {

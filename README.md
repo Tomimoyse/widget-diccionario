@@ -10,8 +10,10 @@ vez que apagas la pantalla, así que al volver a encenderla ya tienes una nueva 
 - **Favoritas**: la estrella del widget guarda la palabra que estás viendo, y la app tiene una
   sección con todas las marcadas.
 - **Estilo del widget** configurable: color y transparencia del fondo, color y tamaño de la letra,
-  con vista previa en vivo.
-- **Tutorial** para poner el widget en la pantalla de bloqueo de Samsung con Good Lock y LockStar.
+  con vista previa en vivo. Los cambios se aplican al tocar «Confirmar».
+- **Pantalla de bloqueo**: la app pregunta la marca del celular. En Samsung explica cómo poner el
+  widget con Good Lock y LockStar (o FineLock, no oficial, en modelos más viejos); en otras marcas,
+  qué activar para ver la palabra con la notificación.
 - Interfaz de estilo editorial (papel y tinta, tipografía serif), con variante oscura.
 - **Cambio al apagar la pantalla** mediante un servicio en primer plano.
 - **Notificación con la palabra**, que también se ve en la pantalla de bloqueo. Se puede reducir a
@@ -20,7 +22,7 @@ vez que apagas la pantalla, así que al volver a encenderla ya tienes una nueva 
   mostrado todas.
 - **56 404 palabras** de [Wikcionario](https://es.wiktionary.org), sin vulgarismos ni términos
   despectivos.
-- **Ayuda integrada** (botón `?`) con el estado de cada requisito, y botón para detener la app.
+- **Botón para detener la app** por completo.
 
 ## Requisitos
 
@@ -35,7 +37,7 @@ vez que apagas la pantalla, así que al volver a encenderla ya tienes una nueva 
 export ANDROID_HOME=/ruta/al/Android/Sdk
 
 ./gradlew assembleDebug        # APK en app/build/outputs/apk/debug/app-debug.apk
-./gradlew testDebugUnitTest    # tests unitarios
+./gradlew testDebugUnitTest    # tests (mazo y pantallas, con Robolectric)
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
@@ -106,7 +108,8 @@ Para que todo funcione, en la app:
 4. Para ver la palabra en la pantalla de bloqueo, las notificaciones del bloqueo tienen que mostrar
    contenido. En Samsung: Ajustes → Pantalla de bloqueo y AOD → Notificaciones → estilo «Detalles».
 
-El botón `?` de la app muestra cuáles de estos puntos están activos.
+En la app, Personalizar → Widget en la pantalla de bloqueo → Otra marca muestra cuáles de estos
+puntos están activos.
 
 ## Cómo funciona
 
@@ -130,7 +133,8 @@ El botón `?` de la app muestra cuáles de estos puntos están activos.
 
 - **Widget en la pantalla de bloqueo.** El widget declara la categoría `keyguard`, pero en One UI
   (Samsung) la pantalla de bloqueo solo admite widgets de apps de Samsung. Se puede poner con
-  Good Lock y LockStar (la app incluye un tutorial), o usar la notificación con la palabra.
+  Good Lock y LockStar (la app incluye un tutorial); en modelos que no admiten Good Lock existe
+  FineLock, que no es oficial. En cualquier marca queda la notificación con la palabra.
 - **Notificación.** Mientras la palabra cambia al apagar la pantalla, Android obliga a mostrar una
   notificación. Para que no haya ninguna, desactiva ese interruptor: el widget pasará a cambiar al
   tocarlo o cada 30 minutos.
@@ -139,15 +143,17 @@ El botón `?` de la app muestra cuáles de estos puntos están activos.
 
 ```
 app/src/main/java/app/widgetdiccionario/
-├── MainActivity.kt              Pantalla principal, ayuda y botón de detener
+├── MainActivity.kt              Pantalla principal y botón de detener
 ├── FavoritasActivity.kt         Lista de palabras favoritas
 ├── EstiloWidgetActivity.kt      Personalización del widget con vista previa
-├── TutorialBloqueoActivity.kt   Tutorial de Good Lock y LockStar
+├── PantallaBloqueoActivity.kt   Pregunta la marca del celular
+├── TutorialSamsungActivity.kt   Tutorial de Good Lock, LockStar y FineLock
+├── OtraMarcaActivity.kt         Requisitos para otras marcas, con su estado
 ├── Ajustes.kt                   Preferencias y estado del mazo
 ├── data/                        Room (diccionario y favoritas), Favoritas y Mazo
 ├── pantalla/                    PantallaService, NotificacionPalabra, ArranqueReceiver
 └── widget/                      PalabraWidgetProvider, ActualizadorWidget y EstiloWidget
-app/src/test/                    Tests del mazo
+app/src/test/                    Tests del mazo y de las pantallas (Robolectric)
 tools/
 ├── importar_wikcionario.py      Wikcionario (kaikki.org) → palabras_wikcionario.tsv
 ├── build_db.py                  TSV → diccionario.db

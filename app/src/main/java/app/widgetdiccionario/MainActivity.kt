@@ -5,15 +5,11 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.PowerManager
 import android.os.Process
-import android.provider.Settings
-import android.text.Html
 import android.view.View
 import android.widget.Button
 import android.widget.Switch
@@ -61,7 +57,6 @@ class MainActivity : Activity() {
         }
 
         findViewById<Button>(R.id.boton_nueva).setOnClickListener { mostrarOtra() }
-        findViewById<Button>(R.id.boton_ayuda).setOnClickListener { mostrarAyuda() }
         findViewById<Button>(R.id.boton_detener).setOnClickListener { confirmarDetener() }
         findViewById<Button>(R.id.boton_favoritas).setOnClickListener {
             startActivity(Intent(this, FavoritasActivity::class.java))
@@ -70,7 +65,7 @@ class MainActivity : Activity() {
             startActivity(Intent(this, EstiloWidgetActivity::class.java))
         }
         findViewById<View>(R.id.fila_tutorial).setOnClickListener {
-            startActivity(Intent(this, TutorialBloqueoActivity::class.java))
+            startActivity(Intent(this, PantallaBloqueoActivity::class.java))
         }
         mostrarOtra()
 
@@ -138,33 +133,6 @@ class MainActivity : Activity() {
         // Cerrar la tarea dispara onPause/onStop, que vuelcan a disco las SharedPreferences pendientes.
         finishAndRemoveTask()
         Handler(Looper.getMainLooper()).postDelayed({ Process.killProcess(Process.myPid()) }, RETARDO_CIERRE_MS)
-    }
-
-    /** Lista de requisitos con su estado actual (lo que se puede comprobar desde la app). */
-    private fun mostrarAyuda() {
-        fun estado(ok: Boolean) = getString(if (ok) R.string.ayuda_ok else R.string.ayuda_revisar)
-        val info = getString(R.string.ayuda_info)
-        val bateriaSinRestricciones = getSystemService(PowerManager::class.java)
-            .isIgnoringBatteryOptimizations(packageName)
-
-        val puntos = listOf(
-            getString(R.string.ayuda_pantalla, estado(Ajustes.actualizarAlApagar(this))),
-            getString(R.string.ayuda_permiso, estado(NotificacionPalabra.tienePermiso(this))),
-            getString(R.string.ayuda_bateria, estado(bateriaSinRestricciones)),
-            getString(R.string.ayuda_widget, estado(ActualizadorWidget.idsWidgets(this).isNotEmpty())),
-            getString(R.string.ayuda_bloqueo, info),
-            getString(R.string.ayuda_reactivar, info),
-        )
-        AlertDialog.Builder(this)
-            .setTitle(R.string.ayuda_titulo)
-            .setMessage(Html.fromHtml(puntos.joinToString("<br><br>"), Html.FROM_HTML_MODE_COMPACT))
-            .setPositiveButton(R.string.ayuda_cerrar, null)
-            .setNeutralButton(R.string.ayuda_abrir_ajustes) { _, _ ->
-                startActivity(
-                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", packageName, null)),
-                )
-            }
-            .show()
     }
 
     private fun pedirPermisoNotificaciones() {

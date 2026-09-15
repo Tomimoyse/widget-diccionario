@@ -71,6 +71,12 @@
         <item name="android:stateListAnimator">@null</item>
     </style>
 
+    <!-- Botón principal: relleno de tinta. -->
+    <style name="Boton.Lleno" parent="Boton.Linea">
+        <item name="android:background">@drawable/boton_lleno</item>
+        <item name="android:textColor">@color/papel</item>
+    </style>
+
     <!-- Fila de menú: texto a la izquierda, flecha a la derecha, línea debajo. -->
     <style name="Fila.Menu" parent="">
         <item name="android:background">?android:attr/selectableItemBackground</item>

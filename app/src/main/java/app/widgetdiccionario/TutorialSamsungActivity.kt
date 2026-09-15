@@ -15,9 +15,9 @@ import androidx.core.net.toUri
 
 /**
  * Tutorial para poner el widget en la pantalla de bloqueo de Samsung, que solo admite widgets propios,
- * usando Good Lock y su módulo LockStar.
+ * usando Good Lock y su módulo LockStar. Para modelos sin Good Lock sugiere FineLock (no oficial).
  */
-class TutorialBloqueoActivity : Activity() {
+class TutorialSamsungActivity : Activity() {
 
     private data class Paso(@StringRes val titulo: Int, @StringRes val texto: Int, @DrawableRes val imagen: Int, val anchoDp: Int)
 
@@ -31,7 +31,7 @@ class TutorialBloqueoActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tutorial_bloqueo)
+        setContentView(R.layout.activity_tutorial_samsung)
 
         val contenedor = findViewById<LinearLayout>(R.id.pasos)
         pasos.forEachIndexed { indice, paso ->
@@ -49,6 +49,8 @@ class TutorialBloqueoActivity : Activity() {
         }
 
         findViewById<View>(R.id.boton_galaxy_store).setOnClickListener { abrirGoodLock() }
+        findViewById<ImageView>(R.id.imagen_finelock).clipToOutline = true
+        findViewById<View>(R.id.boton_finelock).setOnClickListener { buscarFineLock() }
     }
 
     /** Abre la ficha de Good Lock en Galaxy Store; si la tienda no está, en su versión web. */
@@ -59,6 +61,18 @@ class TutorialBloqueoActivity : Activity() {
             startActivity(
                 Intent(Intent.ACTION_VIEW, "https://galaxystore.samsung.com/detail/$PAQUETE_GOOD_LOCK".toUri()),
             )
+        }
+    }
+
+    /**
+     * Busca FineLock en Play Store. Se usa la búsqueda y no un id de paquete para no enviar al usuario a
+     * una app equivocada.
+     */
+    private fun buscarFineLock() {
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, "market://search?q=FineLock&c=apps".toUri()))
+        } catch (_: ActivityNotFoundException) {
+            startActivity(Intent(Intent.ACTION_VIEW, "https://play.google.com/store/search?q=FineLock&c=apps".toUri()))
         }
     }
 

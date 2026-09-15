@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
@@ -161,12 +162,38 @@
             android:layout_marginHorizontal="-12dp"
             android:layout_marginTop="6dp" />
 
-        <Button
-            android:id="@+id/boton_restablecer"
-            style="@style/Boton.Linea"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="36dp"
-            android:text="@string/estilo_restablecer" />
+            android:orientation="horizontal"
+            tools:ignore="ButtonStyle">
+
+            <Button
+                android:id="@+id/boton_restablecer"
+                style="@style/Boton.Linea"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/estilo_restablecer" />
+
+            <Button
+                android:id="@+id/boton_confirmar"
+                style="@style/Boton.Lleno"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:text="@string/estilo_confirmar" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/estilo_pendiente"
+            style="@style/Texto.Secundario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/estilo_pendiente"
+            android:visibility="invisible" />
     </LinearLayout>
 </ScrollView>

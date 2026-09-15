@@ -67,7 +67,7 @@ class FavoritasActivity : Activity() {
 
     private fun quitar(favorita: Favorita) = scope.launch {
         // Se saca primero de la lista: un segundo toque rápido sobre la misma fila no encuentra nada.
-        val posicion = adaptador.quitar(favorita)
+        val posicion = adaptador.sacarDeLaLista(favorita)
         if (posicion < 0) return@launch
         Favoritas.quitar(this@FavoritasActivity, favorita)
         actualizarEncabezado()
@@ -83,7 +83,7 @@ class FavoritasActivity : Activity() {
             barraDeshacer.visibility = View.GONE
             scope.launch {
                 Favoritas.restaurar(this@FavoritasActivity, favorita)
-                adaptador.insertar(posicion, favorita)
+                adaptador.volverALaLista(posicion, favorita)
                 actualizarEncabezado()
                 ActualizadorWidget.repintar(this@FavoritasActivity)
             }
@@ -102,8 +102,8 @@ class FavoritasActivity : Activity() {
             notifyDataSetChanged()
         }
 
-        /** Devuelve la posición que ocupaba, o -1 si ya no estaba. */
-        fun quitar(favorita: Favorita): Int {
+        /** Solo toca la lista (no la base de datos). Devuelve la posición que ocupaba, o -1 si ya no estaba. */
+        fun sacarDeLaLista(favorita: Favorita): Int {
             val posicion = favoritas.indexOf(favorita)
             if (posicion >= 0) {
                 favoritas.removeAt(posicion)
@@ -112,7 +112,7 @@ class FavoritasActivity : Activity() {
             return posicion
         }
 
-        fun insertar(posicion: Int, favorita: Favorita) {
+        fun volverALaLista(posicion: Int, favorita: Favorita) {
             favoritas.add(posicion.coerceAtMost(favoritas.size), favorita)
             notifyDataSetChanged()
         }
@@ -132,7 +132,8 @@ class FavoritasActivity : Activity() {
                 favorita.categoria?.takeIf { it.isNotBlank() }?.let { "· $it" }.orEmpty()
             vista.findViewById<TextView>(R.id.item_definicion).text = favorita.definicion
             vista.findViewById<ImageButton>(R.id.item_estrella).setOnClickListener {
-                quitar(favorita)
+                // Explícito: dentro del adaptador, un "quitar" a secas podría resolverse a un método suyo.
+                this@FavoritasActivity.quitar(favorita)
             }
             return vista
         }

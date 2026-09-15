@@ -19,8 +19,8 @@ android {
         applicationId = "app.widgetdiccionario"
         minSdk = 26
         targetSdk = 36
-        versionCode = 4
-        versionName = "1.2"
+        versionCode = 6
+        versionName = "1.3-wip.2"
     }
 
     signingConfigs {
@@ -48,6 +48,15 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    testOptions {
+        // Robolectric necesita los recursos para inflar layouts en los tests de pantallas.
+        unitTests.isIncludeAndroidResources = true
+        // Robolectric accede a internos de la JVM que JDK 17+ oculta por defecto.
+        unitTests.all {
+            it.jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED", "--add-exports=java.base/jdk.internal.access=ALL-UNNAMED")
+        }
+    }
+
     androidResources {
         // La base de datos precargada no debe comprimirse dentro del APK.
         noCompress += "db"
@@ -62,4 +71,7 @@ dependencies {
     ksp(libs.room.compiler)
 
     testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.androidx.test.junit)
 }

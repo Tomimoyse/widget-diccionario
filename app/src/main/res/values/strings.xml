@@ -6,18 +6,85 @@
     <string name="widget_categoria_ejemplo">f.</string>
     <string name="widget_definicion_ejemplo">Hallazgo valioso que se produce de manera accidental o casual.</string>
 
-    <string name="main_titulo">Polimatía</string>
+    <string name="main_palabra_del_momento">Palabra del momento</string>
+    <string name="main_pie">Diccionario del español</string>
+    <string name="main_seccion_personalizar">Personalizar</string>
+    <string name="main_seccion_funcionamiento">Funcionamiento</string>
+    <string name="main_fila_estilo">Estilo del widget</string>
+    <string name="main_fila_estilo_desc">Color y transparencia del fondo, tamaño y color de la letra</string>
+    <string name="main_fila_tutorial">Widget en la pantalla de bloqueo</string>
+    <string name="main_fila_tutorial_desc">Cómo ponerlo en un Samsung con Good Lock</string>
+    <string name="flecha">→</string>
+    <string name="numero_orden">%1$02d</string>
     <string name="main_switch_desc">La palabra del widget cambia cada vez que apagas la pantalla, así ya está lista al encenderla. Si lo desactivas, cambia al tocar el widget o cada 30 minutos.</string>
     <string name="main_switch_notificacion">Mostrar la palabra en la notificación</string>
     <string name="main_switch_notificacion_desc">Así también la ves en la pantalla de bloqueo. Si la desactivas queda una notificación mínima y oculta, porque Android la exige mientras la app trabaja en segundo plano.</string>
 
-    <string name="main_boton_favoritas">★ Favoritas</string>
-    <string name="main_boton_favoritas_cantidad">★ Favoritas (%1$d)</string>
+    <string name="main_boton_favoritas">Favoritas</string>
+    <string name="main_boton_favoritas_cantidad">Favoritas · %1$d</string>
+
+    <string name="marca_pregunta">¿De qué marca es tu celular?</string>
+    <string name="marca_samsung">Samsung</string>
+    <string name="marca_samsung_desc">Widget en la pantalla de bloqueo con Good Lock y LockStar</string>
+    <string name="otra_marca">Otra marca</string>
+    <string name="otra_marca_desc">La palabra en la pantalla de bloqueo con la notificación</string>
+    <string name="otra_marca_intro">En estos celulares la palabra llega a la pantalla de bloqueo con la notificación de Polimatía. Revisa que esté todo activado:</string>
+    <string name="tutorial_finelock_etiqueta">Samsung más viejos</string>
+    <string name="tutorial_finelock_titulo">¿No puedes instalar Good Lock?</string>
+    <string name="tutorial_finelock_texto">Por desgracia, Samsung no permite que los celulares más viejos descarguen Good Lock porque son re otarios, pero todavía hay una solución no oficial en la Play Store que te permite utilizar LockStar: se llama FineLock. Te va a pedir que descargues 2 apps externas no oficiales, pero va a funcionar bien. Como no son aplicaciones oficiales de Samsung, instalarlas o no queda bajo tu propio riesgo.</string>
+    <string name="tutorial_finelock_imagen">Icono de FineLock</string>
+    <string name="tutorial_finelock_boton">Buscar FineLock en Play Store</string>
+
+    <string name="tutorial_intro">La pantalla de bloqueo de los teléfonos Samsung solo acepta widgets de apps de Samsung. Con Good Lock, una app oficial y gratuita de Samsung, y su módulo LockStar puedes poner igualmente el widget de Polimatía.</string>
+    <string name="tutorial_paso1_titulo">Abre Galaxy Store</string>
+    <string name="tutorial_paso1_texto">Busca este icono en tu teléfono: es la tienda de apps de Samsung.</string>
+    <string name="tutorial_paso2_titulo">Instala Good Lock</string>
+    <string name="tutorial_paso2_texto">Busca «Good Lock» en Galaxy Store, instálala y ábrela.</string>
+    <string name="tutorial_paso3_titulo">Instala LockStar</string>
+    <string name="tutorial_paso3_texto">Dentro de Good Lock, busca LockStar en la lista de módulos, instálalo con el botón de descarga y ábrelo.</string>
+    <string name="tutorial_paso4_titulo">Añade el widget</string>
+    <string name="tutorial_paso4_texto">Mantén pulsada la pantalla de bloqueo para editarla. Abajo aparece el botón LockStar: tócalo y agrega el widget de Polimatía. Para terminar, toca «Hecho».</string>
+    <string name="tutorial_paso5_titulo">Listo</string>
+    <string name="tutorial_paso5_texto">La palabra aparece en tu pantalla de bloqueo y cambia cada vez que apagas la pantalla.</string>
+    <string name="tutorial_nota">Good Lock y LockStar pueden no estar disponibles en todos los países o modelos. Si no encuentras alguna opción, actualiza las dos apps desde Galaxy Store.</string>
+    <string name="tutorial_boton_store">Abrir Good Lock en Galaxy Store</string>
+
+    <string name="estilo_intro">Prueba los cambios en la vista previa y toca «Confirmar» para aplicarlos al widget.</string>
+    <string name="estilo_seccion_fondo">Fondo</string>
+    <string name="estilo_seccion_letra">Letra</string>
+    <string name="estilo_color">Color</string>
+    <string name="estilo_transparencia">Transparencia</string>
+    <string name="estilo_tamano">Tamaño</string>
+    <string name="estilo_porcentaje">%1$d %%</string>
+    <string name="estilo_restablecer">Restablecer</string>
+    <string name="estilo_confirmar">Confirmar</string>
+    <string name="estilo_pendiente">Hay cambios sin confirmar.</string>
+    <string name="estilo_aplicado">Estilo aplicado al widget</string>
+    <string name="color_automatico">Automático, colores del sistema</string>
+    <string name="color_automatico_corto">Auto</string>
+    <string name="color_seleccionado">, seleccionado</string>
+    <string name="color_negro">Negro</string>
+    <string name="color_carbon">Carbón</string>
+    <string name="color_blanco">Blanco</string>
+    <string name="color_papel">Papel</string>
+    <string name="color_arena">Arena</string>
+    <string name="color_azul_noche">Azul noche</string>
+    <string name="color_verde_bosque">Verde bosque</string>
+    <string name="color_borgona">Borgoña</string>
+    <string name="color_gris">Gris</string>
+    <string name="color_dorado">Dorado</string>
+    <string name="color_celeste">Celeste</string>
+    <string name="color_rosa">Rosa</string>
 
     <string name="favorita_marcar">Marcar como favorita</string>
     <string name="favorita_quitar">Quitar de favoritas</string>
     <string name="favoritas_titulo">Favoritas</string>
-    <string name="favoritas_titulo_cantidad">Favoritas (%1$d)</string>
+    <plurals name="favoritas_cantidad">
+        <item quantity="one">%1$d palabra guardada</item>
+        <item quantity="other">%1$d palabras guardadas</item>
+    </plurals>
+    <string name="favoritas_quitada">Quitaste «%1$s»</string>
+    <string name="favoritas_deshacer">Deshacer</string>
     <string name="favoritas_vacia">Todavía no tienes palabras favoritas. Toca la estrella del widget para guardar la palabra que estás viendo.</string>
 
     <string name="main_boton_detener">Detener la app</string>
@@ -27,20 +94,17 @@
     <string name="detener_confirmar">Detener</string>
     <string name="detener_cancelar">Cancelar</string>
 
-    <string name="ayuda_boton">\?</string>
-    <string name="ayuda_descripcion">Ayuda: qué activar para que la app funcione</string>
-    <string name="ayuda_titulo">Qué activar para que funcione</string>
     <string name="ayuda_ok">✅</string>
     <string name="ayuda_revisar">⚠️</string>
     <string name="ayuda_info">ℹ️</string>
     <string name="ayuda_pantalla">%1$s &lt;b&gt;Cambiar la palabra al apagar la pantalla&lt;/b&gt;: el interruptor de esta pantalla debe estar activado.</string>
     <string name="ayuda_permiso">%1$s &lt;b&gt;Permiso de notificaciones&lt;/b&gt;: necesario para ver la palabra en la notificación. Ajustes → Aplicaciones → Polimatía → Notificaciones.</string>
+    <string name="ayuda_notificacion">%1$s &lt;b&gt;Mostrar la palabra en la notificación&lt;/b&gt;: el segundo interruptor de la pantalla principal debe estar activado.</string>
     <string name="ayuda_bateria">%1$s &lt;b&gt;Batería sin restricciones&lt;/b&gt;: evita que Android detenga la app en segundo plano. Ajustes → Aplicaciones → Polimatía → Batería → Sin restricciones.</string>
-    <string name="ayuda_widget">%1$s &lt;b&gt;Widget en la pantalla de inicio&lt;/b&gt;: mantén pulsado un espacio vacío de la pantalla de inicio → Widgets → Polimatía.</string>
-    <string name="ayuda_bloqueo">%1$s &lt;b&gt;Palabra en la pantalla de bloqueo&lt;/b&gt;: Ajustes → Pantalla de bloqueo y AOD → Notificaciones → estilo «Detalles» y «Mostrar contenido» activado.</string>
+    <string name="ayuda_widget">%1$s &lt;b&gt;Widget en la pantalla de inicio&lt;/b&gt; (opcional): mantén pulsado un espacio vacío de la pantalla de inicio → Widgets → Polimatía.</string>
+    <string name="ayuda_bloqueo">%1$s &lt;b&gt;Contenido visible en la pantalla de bloqueo&lt;/b&gt;: en los ajustes de notificaciones de la pantalla de bloqueo, elige mostrar el contenido completo. El nombre exacto de la opción cambia según la marca.</string>
     <string name="ayuda_reactivar">%1$s &lt;b&gt;Si el widget deja de cambiar&lt;/b&gt;: tócalo una vez o abre esta app para reactivar el servicio. Tras reiniciar el teléfono se reactiva solo.</string>
     <string name="ayuda_abrir_ajustes">Ajustes de la app</string>
-    <string name="ayuda_cerrar">Entendido</string>
     <string name="main_switch">Cambiar la palabra al apagar la pantalla</string>
     <string name="main_atribucion">Definiciones de Wikcionario (https://es.wiktionary.org), disponibles bajo la licencia CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/). Extraídas con Wiktextract (https://kaikki.org).</string>
     <string name="main_boton_nueva">Otra palabra</string>

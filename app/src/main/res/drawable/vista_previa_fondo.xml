@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Imita un fondo de pantalla para que se aprecie la transparencia del widget. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <gradient
+        android:angle="135"
+        android:centerColor="#B98B73"
+        android:endColor="#2F4858"
+        android:startColor="#E3C9A8" />
+    <corners android:radius="14dp" />
+</shape>

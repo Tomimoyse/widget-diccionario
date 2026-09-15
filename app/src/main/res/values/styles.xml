@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Etiqueta en mayúsculas espaciadas ("DICCIONARIO FASHION" en la referencia). -->
+    <style name="Texto.Etiqueta" parent="">
+        <item name="android:fontFamily">@font/texto</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.16</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/tinta_suave</item>
+    </style>
+
+    <!-- La palabra: Playfair Display en negrita cursiva. -->
+    <style name="Texto.Palabra" parent="">
+        <item name="android:fontFamily">@font/playfair_negrita_cursiva</item>
+        <item name="android:textSize">36sp</item>
+        <item name="android:textColor">@color/tinta</item>
+    </style>
+
+    <style name="Texto.Categoria" parent="">
+        <item name="android:fontFamily">@font/playfair_display_italic</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/tinta</item>
+    </style>
+
+    <style name="Texto.Titulo" parent="">
+        <item name="android:fontFamily">@font/playfair_negrita_cursiva</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:textColor">@color/tinta</item>
+    </style>
+
+    <style name="Texto.Subtitulo" parent="">
+        <item name="android:fontFamily">@font/playfair_seminegrita_cursiva</item>
+        <item name="android:textSize">21sp</item>
+        <item name="android:textColor">@color/tinta</item>
+    </style>
+
+    <style name="Texto.Cuerpo" parent="">
+        <item name="android:fontFamily">@font/texto</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:lineSpacingMultiplier">1.25</item>
+        <item name="android:textColor">@color/tinta</item>
+    </style>
+
+    <style name="Texto.Secundario" parent="">
+        <item name="android:fontFamily">@font/texto</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineSpacingMultiplier">1.2</item>
+        <item name="android:textColor">@color/tinta_suave</item>
+    </style>
+
+    <!-- Número de orden "07" de la referencia. -->
+    <style name="Texto.Numero" parent="">
+        <item name="android:fontFamily">@font/playfair_display</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/tinta_suave</item>
+    </style>
+
+    <!-- Botón sin relleno con borde fino y texto en versalitas espaciadas. -->
+    <style name="Boton.Linea" parent="">
+        <item name="android:background">@drawable/boton_linea</item>
+        <item name="android:fontFamily">@font/texto</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:letterSpacing">0.12</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/tinta</item>
+        <item name="android:minHeight">46dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:paddingStart">18dp</item>
+        <item name="android:paddingEnd">18dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <!-- Botón principal: relleno de tinta. -->
+    <style name="Boton.Lleno" parent="Boton.Linea">
+        <item name="android:background">@drawable/boton_lleno</item>
+        <item name="android:textColor">@color/papel</item>
+    </style>
+
+    <!-- Fila de menú: texto a la izquierda, flecha a la derecha, línea debajo. -->
+    <style name="Fila.Menu" parent="">
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:minHeight">60dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="Linea" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/linea</item>
+    </style>
+</resources>

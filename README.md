@@ -9,6 +9,12 @@ vez que apagas la pantalla, así que al volver a encenderla ya tienes una nueva 
   muestra otra palabra.
 - **Favoritas**: la estrella del widget guarda la palabra que estás viendo, y la app tiene una
   sección con todas las marcadas.
+- **Estilo del widget** configurable: color y transparencia del fondo, color y tamaño de la letra,
+  con vista previa en vivo. Los cambios se aplican al tocar «Confirmar».
+- **Pantalla de bloqueo**: la app pregunta la marca del celular. En Samsung explica cómo poner el
+  widget con Good Lock y LockStar (o FineLock, no oficial, en modelos más viejos); en otras marcas,
+  qué activar para ver la palabra con la notificación.
+- Interfaz de estilo editorial (papel y tinta, tipografía serif), con variante oscura.
 - **Cambio al apagar la pantalla** mediante un servicio en primer plano.
 - **Notificación con la palabra**, que también se ve en la pantalla de bloqueo. Se puede reducir a
   una notificación mínima desde la app.
@@ -16,7 +22,7 @@ vez que apagas la pantalla, así que al volver a encenderla ya tienes una nueva 
   mostrado todas.
 - **56 404 palabras** de [Wikcionario](https://es.wiktionary.org), sin vulgarismos ni términos
   despectivos.
-- **Ayuda integrada** (botón `?`) con el estado de cada requisito, y botón para detener la app.
+- **Botón para detener la app** por completo.
 
 ## Requisitos
 
@@ -31,7 +37,7 @@ vez que apagas la pantalla, así que al volver a encenderla ya tienes una nueva 
 export ANDROID_HOME=/ruta/al/Android/Sdk
 
 ./gradlew assembleDebug        # APK en app/build/outputs/apk/debug/app-debug.apk
-./gradlew testDebugUnitTest    # tests unitarios
+./gradlew testDebugUnitTest    # tests (mazo y pantallas, con Robolectric)
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
@@ -39,7 +45,7 @@ También se puede abrir la carpeta con Android Studio y ejecutar desde ahí.
 
 ## APK de release firmada
 
-La APK de release está optimizada con R8 (unos 5,8 MB frente a 8,6 MB de la de depuración) y va
+La APK de release está optimizada con R8 (bastante más liviana que la de depuración) y va
 firmada con una clave propia. Es la que conviene compartir.
 
 ### 1. Crear el keystore (solo la primera vez)
@@ -102,7 +108,8 @@ Para que todo funcione, en la app:
 4. Para ver la palabra en la pantalla de bloqueo, las notificaciones del bloqueo tienen que mostrar
    contenido. En Samsung: Ajustes → Pantalla de bloqueo y AOD → Notificaciones → estilo «Detalles».
 
-El botón `?` de la app muestra cuáles de estos puntos están activos.
+En la app, Personalizar → Widget en la pantalla de bloqueo → Otra marca muestra cuáles de estos
+puntos están activos.
 
 ## Cómo funciona
 
@@ -125,8 +132,9 @@ El botón `?` de la app muestra cuáles de estos puntos están activos.
 ## Limitaciones conocidas
 
 - **Widget en la pantalla de bloqueo.** El widget declara la categoría `keyguard`, pero en One UI
-  (Samsung) la pantalla de bloqueo solo admite widgets de apps de Samsung. La notificación con la
-  palabra es la alternativa.
+  (Samsung) la pantalla de bloqueo solo admite widgets de apps de Samsung. Se puede poner con
+  Good Lock y LockStar (la app incluye un tutorial); en modelos que no admiten Good Lock existe
+  FineLock, que no es oficial. En cualquier marca queda la notificación con la palabra.
 - **Notificación.** Mientras la palabra cambia al apagar la pantalla, Android obliga a mostrar una
   notificación. Para que no haya ninguna, desactiva ese interruptor: el widget pasará a cambiar al
   tocarlo o cada 30 minutos.
@@ -135,13 +143,17 @@ El botón `?` de la app muestra cuáles de estos puntos están activos.
 
 ```
 app/src/main/java/app/widgetdiccionario/
-├── MainActivity.kt              Pantalla principal, ayuda y botón de detener
+├── MainActivity.kt              Pantalla principal y botón de detener
 ├── FavoritasActivity.kt         Lista de palabras favoritas
+├── EstiloWidgetActivity.kt      Personalización del widget con vista previa
+├── PantallaBloqueoActivity.kt   Pregunta la marca del celular
+├── TutorialSamsungActivity.kt   Tutorial de Good Lock, LockStar y FineLock
+├── OtraMarcaActivity.kt         Requisitos para otras marcas, con su estado
 ├── Ajustes.kt                   Preferencias y estado del mazo
 ├── data/                        Room (diccionario y favoritas), Favoritas y Mazo
 ├── pantalla/                    PantallaService, NotificacionPalabra, ArranqueReceiver
-└── widget/                      PalabraWidgetProvider y ActualizadorWidget
-app/src/test/                    Tests del mazo
+└── widget/                      PalabraWidgetProvider, ActualizadorWidget y EstiloWidget
+app/src/test/                    Tests del mazo y de las pantallas (Robolectric)
 tools/
 ├── importar_wikcionario.py      Wikcionario (kaikki.org) → palabras_wikcionario.tsv
 ├── build_db.py                  TSV → diccionario.db
@@ -179,6 +191,10 @@ resultado (requiere `cairosvg`).
   [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), extraídas con
   [Wiktextract](https://kaikki.org). `tools/palabras_wikcionario.tsv` y `diccionario.db` heredan esa
   licencia.
-- **Icono:** glifo de [Noto Serif](https://fonts.google.com/noto/specimen/Noto+Serif), bajo la
-  SIL Open Font License.
+- **Tipografías:** [Playfair Display](https://fonts.google.com/specimen/Playfair+Display) (sin
+  modificar) y [Noto Serif](https://fonts.google.com/noto/specimen/Noto+Serif) (reducida a
+  caracteres latinos), ambas bajo la SIL Open Font License. Las licencias van en
+  `app/src/main/assets/licencias/`.
+- **Icono:** glifo de Noto Serif.
+- **Estrellas:** iconos de Material Symbols, bajo la licencia Apache 2.0.
 - **Código:** todavía no tiene una licencia definida.

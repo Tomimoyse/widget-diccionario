@@ -4,4 +4,11 @@
     <color name="widget_texto">#1F1B16</color>
     <color name="widget_texto_secundario">#6B5E4F</color>
     <color name="estrella_favorita">#E0A100</color>
+
+    <!-- Paleta de la app: estilo editorial, papel y tinta. -->
+    <color name="papel">#ECE5DC</color>
+    <color name="papel_hondo">#E3DAD0</color>
+    <color name="tinta">#1E1B18</color>
+    <color name="tinta_suave">#6B625A</color>
+    <color name="linea">#C9BEB2</color>
 </resources>

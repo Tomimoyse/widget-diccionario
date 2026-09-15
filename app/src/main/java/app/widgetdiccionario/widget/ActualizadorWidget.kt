@@ -99,6 +99,7 @@ object ActualizadorWidget {
             )
             // El toque en la estrella tiene su propio PendingIntent, que prevalece sobre el del fondo.
             setOnClickPendingIntent(R.id.estrella, intentFavorita(context, palabra))
+            Ajustes.estiloWidget(context).aplicar(this, favorita)
         }
 
     /** Lleva el id de la palabra pintada: si cambia antes del toque, se marca la que el usuario veía. */

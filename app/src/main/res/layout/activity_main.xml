@@ -9,8 +9,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:paddingHorizontal="28dp"
+        android:paddingVertical="20dp">
 
+        <!-- Encabezado -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -18,117 +20,252 @@
             android:orientation="horizontal">
 
             <TextView
+                style="@style/Texto.Etiqueta"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/main_titulo"
-                android:textAppearance="@android:style/TextAppearance.Material.Headline" />
+                android:text="@string/app_name"
+                android:textColor="@color/tinta" />
 
-            <Button
-                android:id="@+id/boton_ayuda"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/boton_ayuda_fondo"
-                android:contentDescription="@string/ayuda_descripcion"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:padding="0dp"
-                android:stateListAnimator="@null"
-                android:text="@string/ayuda_boton"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="20sp"
-                android:textStyle="bold" />
         </LinearLayout>
 
+        <!-- Ficha de la palabra, al estilo de una entrada de diccionario -->
         <TextView
-            android:id="@+id/vista_palabra"
-            android:layout_width="match_parent"
+            style="@style/Texto.Numero"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:textAppearance="@android:style/TextAppearance.Material.Title" />
-
-        <TextView
-            android:id="@+id/vista_definicion"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textAppearance="@android:style/TextAppearance.Material.Body1" />
+            android:layout_marginTop="44dp"
+            android:text="@string/main_palabra_del_momento" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:baselineAligned="true"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/vista_palabra"
+                style="@style/Texto.Palabra"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Anemoia" />
+
+            <TextView
+                android:id="@+id/vista_categoria"
+                style="@style/Texto.Categoria"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                tools:text="· f." />
+        </LinearLayout>
+
+        <View
+            android:layout_width="170dp"
+            android:layout_height="1.5dp"
             android:layout_marginTop="12dp"
+            android:background="@color/tinta" />
+
+        <TextView
+            android:id="@+id/vista_definicion"
+            style="@style/Texto.Cuerpo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:textSize="18sp"
+            tools:text="La nostalgia por un tiempo que nunca viviste." />
+
+        <TextView
+            style="@style/Texto.Etiqueta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/main_pie"
+            android:textColor="@color/tinta" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
             android:orientation="horizontal"
             tools:ignore="ButtonStyle">
 
             <Button
                 android:id="@+id/boton_nueva"
-                android:layout_width="wrap_content"
+                style="@style/Boton.Linea"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="@string/main_boton_nueva" />
 
             <Button
                 android:id="@+id/boton_favoritas"
-                android:layout_width="wrap_content"
+                style="@style/Boton.Linea"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
                 android:text="@string/main_boton_favoritas" />
         </LinearLayout>
+
+        <!-- Personalizar -->
+        <TextView
+            style="@style/Texto.Etiqueta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:layout_marginBottom="4dp"
+            android:text="@string/main_seccion_personalizar" />
+
+        <View style="@style/Linea" />
+
+        <LinearLayout
+            android:id="@+id/fila_estilo"
+            style="@style/Fila.Menu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingVertical="12dp">
+
+                <TextView
+                    style="@style/Texto.Subtitulo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_fila_estilo" />
+
+                <TextView
+                    style="@style/Texto.Secundario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_fila_estilo_desc" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:importantForAccessibility="no"
+                android:text="@string/flecha"
+                android:textColor="@color/tinta"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <View style="@style/Linea" />
+
+        <LinearLayout
+            android:id="@+id/fila_tutorial"
+            style="@style/Fila.Menu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingVertical="12dp">
+
+                <TextView
+                    style="@style/Texto.Subtitulo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_fila_tutorial" />
+
+                <TextView
+                    style="@style/Texto.Secundario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_fila_tutorial_desc" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:importantForAccessibility="no"
+                android:text="@string/flecha"
+                android:textColor="@color/tinta"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <View style="@style/Linea" />
+
+        <!-- Funcionamiento -->
+        <TextView
+            style="@style/Texto.Etiqueta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="4dp"
+            android:text="@string/main_seccion_funcionamiento" />
+
+        <View style="@style/Linea" />
 
         <Switch
             android:id="@+id/switch_pantalla"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/texto"
             android:text="@string/main_switch"
-            android:textAppearance="@android:style/TextAppearance.Material.Subhead" />
+            android:textColor="@color/tinta"
+            android:textSize="17sp" />
 
         <TextView
+            style="@style/Texto.Secundario"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="@string/main_switch_desc"
-            android:textAppearance="@android:style/TextAppearance.Material.Body1"
-            android:textColor="?android:attr/textColorSecondary" />
+            android:text="@string/main_switch_desc" />
 
         <Switch
             android:id="@+id/switch_notificacion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="22dp"
+            android:fontFamily="@font/texto"
             android:text="@string/main_switch_notificacion"
-            android:textAppearance="@android:style/TextAppearance.Material.Subhead" />
+            android:textColor="@color/tinta"
+            android:textSize="17sp" />
 
         <TextView
             android:id="@+id/desc_notificacion"
+            style="@style/Texto.Secundario"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="@string/main_switch_notificacion_desc"
-            android:textAppearance="@android:style/TextAppearance.Material.Body1"
-            android:textColor="?android:attr/textColorSecondary" />
+            android:text="@string/main_switch_notificacion_desc" />
 
         <Button
             android:id="@+id/boton_detener"
+            style="@style/Boton.Linea"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="28dp"
             android:text="@string/main_boton_detener" />
 
         <TextView
+            style="@style/Texto.Secundario"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/main_boton_detener_desc"
-            android:textAppearance="@android:style/TextAppearance.Material.Body1"
-            android:textColor="?android:attr/textColorSecondary" />
+            android:layout_marginTop="6dp"
+            android:text="@string/main_boton_detener_desc" />
+
+        <!-- Pie -->
+        <View
+            style="@style/Linea"
+            android:layout_marginTop="40dp" />
 
         <TextView
+            style="@style/Texto.Secundario"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="14dp"
             android:autoLink="web"
             android:text="@string/main_atribucion"
-            android:textAppearance="@android:style/TextAppearance.Material.Caption" />
+            android:textSize="12sp" />
     </LinearLayout>
 </ScrollView>

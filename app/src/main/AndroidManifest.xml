@@ -27,6 +27,26 @@
             android:exported="false"
             android:label="@string/favoritas_titulo" />
 
+        <activity
+            android:name=".EstiloWidgetActivity"
+            android:exported="false"
+            android:label="@string/main_fila_estilo" />
+
+        <activity
+            android:name=".PantallaBloqueoActivity"
+            android:exported="false"
+            android:label="@string/main_fila_tutorial" />
+
+        <activity
+            android:name=".TutorialSamsungActivity"
+            android:exported="false"
+            android:label="@string/marca_samsung" />
+
+        <activity
+            android:name=".OtraMarcaActivity"
+            android:exported="false"
+            android:label="@string/otra_marca" />
+
         <receiver
             android:name=".widget.PalabraWidgetProvider"
             android:exported="false">

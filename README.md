@@ -8,7 +8,8 @@ vez que apagas la pantalla, así que al volver a encenderla ya tienes una nueva 
 - **Widget** translúcido para la pantalla de inicio, con colores dinámicos del sistema. Al tocarlo
   muestra otra palabra.
 - **Colección**: la estrella del widget guarda la palabra que estás viendo, y la app tiene una
-  sección con todas las guardadas, en orden alfabético español y agrupadas por letra inicial.
+  sección con todas las guardadas, en orden alfabético español, agrupadas por letra inicial y con
+  buscador (sin importar tildes ni mayúsculas).
 - **Estilo del widget** configurable: color y transparencia del fondo, color y tamaño de la letra,
   con vista previa en vivo. Los cambios se aplican al tocar «Confirmar».
 - **Pantalla de bloqueo**: la app pregunta la marca del celular. En Samsung explica cómo poner el
@@ -22,9 +23,9 @@ vez que apagas la pantalla, así que al volver a encenderla ya tienes una nueva 
   mostrado todas.
 - **56 404 palabras** de [Wikcionario](https://es.wiktionary.org), sin vulgarismos ni términos
   despectivos.
-- **Intercambio en la red local**: dos teléfonos en la misma Wi-Fi se encuentran solos (o se emparejan
-  acercándolos por NFC, o con un código), cada uno elige qué palabras ofrece y ambos aceptan lo que
-  reciben. Las palabras recibidas quedan anotadas con el alias de quien las envió.
+- **Intercambio en la red local**: dos teléfonos en la misma Wi-Fi se encuentran y se conectan solos
+  (o se emparejan acercándolos por NFC, o con un código), cada uno elige **una** palabra y ambos
+  aceptan lo que reciben. Las palabras recibidas quedan anotadas con el alias de quien las envió.
 - **Botón para detener la app** por completo.
 
 ## Requisitos
@@ -133,7 +134,10 @@ puntos están activos.
   texto propio, una línea por mensaje. El anfitrión genera un código de 6 dígitos que ambos ven y
   tienen que confirmar. Por NFC solo viaja la dirección y el puerto: un teléfono hace de tarjeta
   (`HostApduService`) y el otro de lector, porque Android Beam ya no existe. Todo vive mientras la
-  pantalla está abierta: al salir se cierran el anuncio y el puerto.
+  pantalla está abierta: al salir se cierran el anuncio y el puerto. Los dos teléfonos se descubren a
+  la vez, así que para no cruzarse conecta siempre el de la dirección «menor» y el otro espera.
+  Mientras la pantalla está al frente, la app se declara servicio NFC preferente
+  (`CardEmulation.setPreferredService`); sin eso Android pregunta con qué app atender el toque.
 - **Colección.** Va en una base aparte (`favoritas.db`) y cada palabra guarda su propia copia del
   texto, la categoría y la definición. La base del diccionario se reemplaza entera al actualizarlo, y
   los ids cambian; así la colección no se pierde. El orden alfabético se calcula en la app: SQLite

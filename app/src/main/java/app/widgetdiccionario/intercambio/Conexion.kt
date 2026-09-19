@@ -1,5 +1,6 @@
 package app.widgetdiccionario.intercambio
 
+import android.content.Context
 import java.io.Closeable
 import java.io.IOException
 import java.io.InputStreamReader
@@ -36,11 +37,24 @@ class Anfitrion(private val servidor: ServerSocket = ServerSocket(0, 1)) : Close
 /** Se conecta al teléfono que está esperando. */
 object Visitante {
 
-    fun conectar(direccion: InetAddress, puerto: Int, esperaMs: Int = 10_000): Canal {
+    /**
+     * Ata el socket a la red Wi-Fi: si el teléfono tiene los datos móviles como red por defecto, una
+     * conexión sin atar saldría por ahí y nunca llegaría al otro teléfono.
+     */
+    fun conectar(context: Context, direccion: InetAddress, puerto: Int, esperaMs: Int = 10_000): Canal {
+        val socket = Socket()
+        RedLocal.redWifi(context)?.let { wifi -> runCatching { wifi.bindSocket(socket) } }
+        return conectar(socket, direccion, puerto, esperaMs)
+    }
+
+    /** Sin contexto: se usa en pruebas. */
+    fun conectar(direccion: InetAddress, puerto: Int, esperaMs: Int = 10_000): Canal =
+        conectar(Socket(), direccion, puerto, esperaMs)
+
+    private fun conectar(socket: Socket, direccion: InetAddress, puerto: Int, esperaMs: Int): Canal {
         if (!RedLocal.esDeRedLocal(direccion)) {
             throw IOException("Solo se permiten conexiones dentro de la red local")
         }
-        val socket = Socket()
         socket.connect(InetSocketAddress(direccion, puerto), esperaMs)
         return canalDe(socket)
     }

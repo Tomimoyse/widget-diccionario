@@ -21,6 +21,8 @@ class ServicioNfcIntercambio : HostApduService() {
     override fun processCommandApdu(commandApdu: ByteArray?, extras: Bundle?): ByteArray {
         val datos = emparejamiento ?: return SIN_DATOS
         if (commandApdu == null || !esNuestroSelect(commandApdu)) return SIN_DATOS
+        // Nos acaban de leer: la conexión que llegue enseguida viene de ese toque.
+        entregadoEn = System.currentTimeMillis()
         return datos.toByteArray(Charsets.UTF_8) + TODO_BIEN
     }
 
@@ -35,6 +37,10 @@ class ServicioNfcIntercambio : HostApduService() {
         /** Lo que se entrega al acercar: dirección y puerto donde espera este teléfono. */
         @Volatile
         var emparejamiento: String? = null
+
+        /** Cuándo nos leyeron por última vez. */
+        @Volatile
+        var entregadoEn: Long = 0
 
         const val AID = "F0506F6C696D61746961"
         private val TODO_BIEN = byteArrayOf(0x90.toByte(), 0x00)
@@ -82,6 +88,20 @@ object NfcEmparejamiento {
     fun dejarDeAnunciar() {
         ServicioNfcIntercambio.emparejamiento = null
     }
+
+    /**
+     * Si los teléfonos se acercaron hace un momento, el emparejamiento ya está hecho a mano y no hace
+     * falta comparar ningún número. El que lee lo sabe al leer; el que hace de tarjeta, por esta marca.
+     */
+    fun huboToqueReciente(ahora: Long = System.currentTimeMillis()) =
+        ServicioNfcIntercambio.entregadoEn != 0L &&
+            ahora - ServicioNfcIntercambio.entregadoEn < VALIDEZ_DEL_TOQUE_MS
+
+    fun olvidarToque() {
+        ServicioNfcIntercambio.entregadoEn = 0
+    }
+
+    private const val VALIDEZ_DEL_TOQUE_MS = 120_000L
 
     /** Pone el teléfono en modo lector: al acercar el otro, [alLeer] recibe dirección y puerto. */
     fun leer(actividad: Activity, alLeer: (InetAddress, Int) -> Unit) {

@@ -3,8 +3,6 @@ package app.widgetdiccionario
 import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -173,7 +171,7 @@ class IntercambioActivity : Activity() {
         irA(Paso.EMPAREJAR)
         pedirPermisoDeRedLocal()
         avisarSiNoHayWifi()
-        direccionPropia = RedLocal.direccionPropia()
+        direccionPropia = RedLocal.direccionPropia(this)
 
         val servidor = runCatching { Anfitrion() }.getOrNull()
         if (servidor == null) {
@@ -199,7 +197,8 @@ class IntercambioActivity : Activity() {
         // Queda esperando a que el otro teléfono se conecte.
         trabajo = scope.launch {
             val canal = withContext(Dispatchers.IO) { runCatching { servidor.esperarConexion() }.getOrNull() }
-            if (canal != null) intercambiar(canal, anfitrion = true)
+            // Si nos acaban de leer por NFC, la conexión viene de ese toque y el código sobra.
+            if (canal != null) intercambiar(canal, anfitrion = true, porNfc = NfcEmparejamiento.huboToqueReciente())
         }
     }
 
@@ -220,12 +219,12 @@ class IntercambioActivity : Activity() {
             scope.launch {
                 NfcEmparejamiento.dejarDeLeer(this@IntercambioActivity)
                 val canal = withContext(Dispatchers.IO) {
-                    runCatching { Visitante.conectar(direccion, puerto) }.getOrNull()
+                    runCatching { Visitante.conectar(this@IntercambioActivity, direccion, puerto) }.getOrNull()
                 }
                 if (canal == null) {
                     mostrarError(getString(R.string.intercambio_error, ""))
                 } else {
-                    intercambiar(canal, anfitrion = false)
+                    intercambiar(canal, anfitrion = false, porNfc = true)
                 }
             }
         }
@@ -254,7 +253,7 @@ class IntercambioActivity : Activity() {
         trabajo?.cancel()
         trabajo = scope.launch {
             val canal = withContext(Dispatchers.IO) {
-                runCatching { Visitante.conectar(vecino.direccion, vecino.puerto) }.getOrNull()
+                runCatching { Visitante.conectar(this@IntercambioActivity, vecino.direccion, vecino.puerto) }.getOrNull()
             }
             if (canal == null) mostrarError(getString(R.string.intercambio_error, "")) else intercambiar(canal, false)
         }
@@ -270,7 +269,7 @@ class IntercambioActivity : Activity() {
         trabajo?.cancel()
         trabajo = scope.launch {
             val canal = withContext(Dispatchers.IO) {
-                runCatching { Visitante.conectar(destino.first, destino.second) }.getOrNull()
+                runCatching { Visitante.conectar(this@IntercambioActivity, destino.first, destino.second) }.getOrNull()
             }
             if (canal == null) mostrarError(getString(R.string.intercambio_error, "")) else intercambiar(canal, false)
         }
@@ -278,7 +277,7 @@ class IntercambioActivity : Activity() {
 
     // --- El intercambio ---
 
-    private suspend fun intercambiar(canal: Canal, anfitrion: Boolean) {
+    private suspend fun intercambiar(canal: Canal, anfitrion: Boolean, porNfc: Boolean = false) {
         soltarRed()
         val sesion = Sesion(canal, anfitrion)
         val alias = Ajustes.alias(this)
@@ -287,11 +286,14 @@ class IntercambioActivity : Activity() {
             .orEmpty()
         try {
             val saludo = withContext(Dispatchers.IO) { sesion.saludar(alias) }
-            mostrarCodigo(saludo)
-            if (!esperarDecision()) {
-                withContext(Dispatchers.IO) { sesion.despedirse() }
-                finish()
-                return
+            // Acercar los teléfonos ya es la confirmación: no se pide comparar el número.
+            if (!porNfc) {
+                mostrarCodigo(saludo)
+                if (!esperarDecision()) {
+                    withContext(Dispatchers.IO) { sesion.despedirse() }
+                    finish()
+                    return
+                }
             }
             val oferta = withContext(Dispatchers.IO) {
                 sesion.ofrecer(ofrecidas)
@@ -312,7 +314,7 @@ class IntercambioActivity : Activity() {
                 }
             }
             val elOtroAcepto = withContext(Dispatchers.IO) { sesion.esperarRespuesta().also { sesion.despedirse() } }
-            mostrarFinal(saludo.alias, guardadas, oferta.firstOrNull()?.palabra, elOtroAcepto)
+            mostrarFinal(saludo.alias, guardadas, oferta.firstOrNull()?.palabra, acepto, elOtroAcepto)
         } catch (e: Sesion.ErrorDeIntercambio) {
             withContext(Dispatchers.IO) { runCatching { sesion.despedirse() } }
             mostrarError(e.message.orEmpty())
@@ -331,21 +333,36 @@ class IntercambioActivity : Activity() {
         irA(Paso.CONFIRMAR)
     }
 
-    private fun mostrarOferta(alias: String, palabras: List<PalabraOfrecida>) {
+    private suspend fun mostrarOferta(alias: String, palabras: List<PalabraOfrecida>) {
         encabezado(R.string.intercambio_oferta_titulo, "")
         findViewById<TextView>(R.id.titulo_paso).text = getString(R.string.intercambio_oferta_titulo, alias)
-        adaptadorOferta.cargar(palabras)
+        val repetidas = palabras.filter { yaEstaEnLaColeccion(it) }.map { it.palabra }.toSet()
+        adaptadorOferta.cargar(palabras, repetidas)
         irA(Paso.OFERTA)
     }
 
-    private fun mostrarFinal(alias: String, guardadas: Int, palabraRecibida: String?, elOtroAcepto: Boolean) {
+    private suspend fun yaEstaEnLaColeccion(palabra: PalabraOfrecida) = Favoritas.esFavorita(
+        this,
+        app.widgetdiccionario.data.Palabra(0, palabra.palabra, palabra.categoria, palabra.definicion),
+    )
+
+    private fun mostrarFinal(
+        alias: String,
+        guardadas: Int,
+        palabraRecibida: String?,
+        acepto: Boolean,
+        elOtroAcepto: Boolean,
+    ) {
         encabezado(R.string.intercambio_final_titulo, "")
         val resumen = buildString {
             append(
-                if (guardadas > 0 && palabraRecibida != null) {
-                    getString(R.string.intercambio_guardada, palabraRecibida, alias)
-                } else {
-                    getString(R.string.intercambio_guardadas_ninguna)
+                when {
+                    guardadas > 0 && palabraRecibida != null ->
+                        getString(R.string.intercambio_guardada, palabraRecibida, alias)
+                    // Aceptada pero ya la tenía: no se pisa lo que ya estaba guardado.
+                    acepto && palabraRecibida != null ->
+                        getString(R.string.intercambio_ya_la_tenias, palabraRecibida)
+                    else -> getString(R.string.intercambio_guardadas_ninguna)
                 },
             )
             append("\n")
@@ -392,16 +409,16 @@ class IntercambioActivity : Activity() {
         }
     }
 
+    /** Lo que importa es tener una dirección en la Wi-Fi, aunque la red por defecto sean los datos. */
     private fun avisarSiNoHayWifi() {
-        val red = getSystemService(ConnectivityManager::class.java)
-        val capacidades = red?.getNetworkCapabilities(red.activeNetwork)
-        if (capacidades?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) != true) {
+        if (RedLocal.redWifi(this) == null) {
             findViewById<TextView>(R.id.detalle_paso).setText(R.string.intercambio_sin_wifi)
         }
     }
 
     private fun soltarRed() {
         NfcEmparejamiento.dejarDeAnunciar()
+        NfcEmparejamiento.olvidarToque()
         runCatching { NfcEmparejamiento.dejarDeLeer(this) }
         descubridor?.detener()
         descubridor = null
@@ -461,10 +478,12 @@ class IntercambioActivity : Activity() {
 
     private inner class AdaptadorOferta : BaseAdapter() {
         private val palabras = mutableListOf<PalabraOfrecida>()
+        private var repetidas = emptySet<String>()
 
-        fun cargar(nuevas: List<PalabraOfrecida>) {
+        fun cargar(nuevas: List<PalabraOfrecida>, yaGuardadas: Set<String>) {
             palabras.clear()
             palabras.addAll(nuevas)
+            repetidas = yaGuardadas
             notifyDataSetChanged()
         }
 
@@ -479,6 +498,8 @@ class IntercambioActivity : Activity() {
             vista.findViewById<TextView>(R.id.item_palabra).text = palabra.palabra
             vista.findViewById<TextView>(R.id.item_definicion).text = palabra.definicion
             vista.findViewById<RadioButton>(R.id.item_elegida).visibility = View.GONE
+            vista.findViewById<TextView>(R.id.item_repetida).visibility =
+                if (palabra.palabra in repetidas) View.VISIBLE else View.GONE
             return vista
         }
     }

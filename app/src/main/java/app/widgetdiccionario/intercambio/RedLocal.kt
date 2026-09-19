@@ -1,5 +1,9 @@
 package app.widgetdiccionario.intercambio
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
 import java.net.Inet4Address
 import java.net.InetAddress
 import java.net.NetworkInterface
@@ -18,7 +22,31 @@ object RedLocal {
         return bytes.size == 16 && (bytes[0].toInt() and 0xFE) == 0xFC
     }
 
+    /**
+     * La red Wi-Fi, aunque no sea la red por defecto: si el teléfono está usando datos móviles, los
+     * sockets saldrían por ahí y no llegarían al otro teléfono.
+     */
+    @Suppress("DEPRECATION") // allNetworks: la alternativa (callbacks) es asíncrona y aquí hace falta ya.
+    fun redWifi(context: Context): Network? {
+        val redes = context.getSystemService(ConnectivityManager::class.java) ?: return null
+        return redes.allNetworks.firstOrNull { red ->
+            redes.getNetworkCapabilities(red)?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true
+        }
+    }
+
     /** IPv4 propia en la Wi-Fi, para mostrarla o armar el código de conexión manual. */
+    fun direccionPropia(context: Context): Inet4Address? {
+        val redes = context.getSystemService(ConnectivityManager::class.java)
+        val deLaWifi = redWifi(context)
+            ?.let { redes?.getLinkProperties(it) }
+            ?.linkAddresses
+            ?.map { it.address }
+            ?.filterIsInstance<Inet4Address>()
+            ?.firstOrNull { it.isSiteLocalAddress }
+        return deLaWifi ?: direccionPropia()
+    }
+
+    /** Sin contexto: recorre las interfaces de red. Se usa en pruebas y como respaldo. */
     fun direccionPropia(): Inet4Address? = NetworkInterface.getNetworkInterfaces()
         ?.toList()
         ?.asSequence()

@@ -122,6 +122,8 @@
     <string name="intercambio_final_titulo">Listo</string>
     <string name="intercambio_guardada">Guardaste «%1$s» de «%2$s».</string>
     <string name="intercambio_guardadas_ninguna">No guardaste ninguna palabra.</string>
+    <string name="intercambio_ya_la_tenias">«%1$s» ya estaba en tu colección.</string>
+    <string name="intercambio_repetida">Ya está en tu colección</string>
     <string name="intercambio_el_otro_acepto">«%1$s» aceptó tus palabras.</string>
     <string name="intercambio_el_otro_rechazo">«%1$s» no aceptó tus palabras.</string>
     <string name="intercambio_cerrar">Cerrar</string>

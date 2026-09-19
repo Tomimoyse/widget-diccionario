@@ -1,6 +1,8 @@
 package app.widgetdiccionario.intercambio
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Assert.assertNull
 import org.junit.Test
 
@@ -14,6 +16,17 @@ class NfcEmparejamientoTest {
         val leido = NfcEmparejamiento.interpretar(respuesta("polimatia:192.168.0.23:41234"))
         assertEquals("192.168.0.23", leido?.first?.hostAddress)
         assertEquals(41234, leido?.second)
+    }
+
+    @Test
+    fun elToqueValeSoloPorUnRato() {
+        NfcEmparejamiento.olvidarToque()
+        assertFalse("sin toque previo", NfcEmparejamiento.huboToqueReciente())
+
+        ServicioNfcIntercambio.entregadoEn = 1_000_000L
+        assertTrue("recién tocado", NfcEmparejamiento.huboToqueReciente(ahora = 1_030_000L))
+        assertFalse("pasaron minutos", NfcEmparejamiento.huboToqueReciente(ahora = 1_200_000L))
+        NfcEmparejamiento.olvidarToque()
     }
 
     @Test

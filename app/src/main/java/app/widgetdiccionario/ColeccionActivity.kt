@@ -165,6 +165,10 @@ class ColeccionActivity : Activity() {
                     vista.findViewById<TextView>(R.id.item_categoria).text =
                         favorita.categoria?.takeIf { it.isNotBlank() }?.let { "· $it" }.orEmpty()
                     vista.findViewById<TextView>(R.id.item_definicion).text = favorita.definicion
+                    vista.findViewById<TextView>(R.id.item_origen).apply {
+                        text = favorita.origen?.let { getString(R.string.intercambio_origen, it) }.orEmpty()
+                        visibility = if (favorita.origen.isNullOrBlank()) View.GONE else View.VISIBLE
+                    }
                     vista.findViewById<ImageButton>(R.id.item_estrella).setOnClickListener {
                         // Explícito: dentro del adaptador, un "quitar" a secas podría resolverse a un método suyo.
                         this@ColeccionActivity.quitar(favorita)

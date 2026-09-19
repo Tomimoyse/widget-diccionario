@@ -108,12 +108,60 @@
                 android:text="@string/main_boton_coleccion" />
         </LinearLayout>
 
-        <!-- Personalizar -->
+        <!-- Compartir -->
         <TextView
             style="@style/Texto.Etiqueta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="48dp"
+            android:layout_marginBottom="4dp"
+            android:text="@string/main_seccion_compartir" />
+
+        <View style="@style/Linea" />
+
+        <LinearLayout
+            android:id="@+id/fila_intercambio"
+            style="@style/Fila.Menu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingVertical="12dp">
+
+                <TextView
+                    style="@style/Texto.Subtitulo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_fila_intercambio" />
+
+                <TextView
+                    style="@style/Texto.Secundario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_fila_intercambio_desc" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:importantForAccessibility="no"
+                android:text="@string/flecha"
+                android:textColor="@color/tinta"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <View style="@style/Linea" />
+
+        <!-- Personalizar -->
+        <TextView
+            style="@style/Texto.Etiqueta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
             android:layout_marginBottom="4dp"
             android:text="@string/main_seccion_personalizar" />
 

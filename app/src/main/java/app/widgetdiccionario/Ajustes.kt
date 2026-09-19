@@ -12,6 +12,7 @@ object Ajustes {
     private const val CLAVE_MAZO_CLAVE = "mazo_clave"
     private const val CLAVE_MAZO_TOTAL = "mazo_total"
     private const val CLAVE_MAZO_POSICION = "mazo_posicion"
+    private const val CLAVE_ALIAS = "alias"
     private const val CLAVE_ESTILO_FONDO = "estilo_color_fondo"
     private const val CLAVE_ESTILO_TRANSPARENCIA = "estilo_transparencia"
     private const val CLAVE_ESTILO_TEXTO = "estilo_color_texto"
@@ -48,6 +49,11 @@ object Ajustes {
         putInt(CLAVE_MAZO_TOTAL, estado.total)
         putInt(CLAVE_MAZO_POSICION, estado.posicion)
     }
+
+    /** Nombre con el que te ven los demás al intercambiar; vacío hasta que lo eliges. */
+    fun alias(context: Context): String = prefs(context).getString(CLAVE_ALIAS, "").orEmpty()
+
+    fun setAlias(context: Context, alias: String) = prefs(context).edit { putString(CLAVE_ALIAS, alias.trim()) }
 
     fun estiloWidget(context: Context): EstiloWidget = prefs(context).run {
         val base = EstiloWidget.PREDETERMINADO

@@ -61,6 +61,9 @@ class MainActivity : Activity() {
         findViewById<Button>(R.id.boton_coleccion).setOnClickListener {
             startActivity(Intent(this, ColeccionActivity::class.java))
         }
+        findViewById<View>(R.id.fila_intercambio).setOnClickListener {
+            startActivity(Intent(this, IntercambioActivity::class.java))
+        }
         findViewById<View>(R.id.fila_estilo).setOnClickListener {
             startActivity(Intent(this, EstiloWidgetActivity::class.java))
         }

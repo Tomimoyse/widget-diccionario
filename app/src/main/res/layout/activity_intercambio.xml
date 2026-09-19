@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="28dp"
+        android:paddingTop="20dp">
+
+        <TextView
+            style="@style/Texto.Etiqueta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textColor="@color/tinta" />
+
+        <TextView
+            android:id="@+id/titulo_paso"
+            style="@style/Texto.Titulo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp" />
+
+        <TextView
+            android:id="@+id/detalle_paso"
+            style="@style/Texto.Secundario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp" />
+
+        <View
+            style="@style/Linea"
+            android:layout_marginTop="16dp" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+    <!-- Paso: alias -->
+    <LinearLayout
+        android:id="@+id/paso_alias"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingHorizontal="28dp"
+        android:paddingTop="24dp"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/campo_alias"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="name"
+            android:fontFamily="@font/texto"
+            android:hint="@string/intercambio_alias_pista"
+            android:inputType="textPersonName|textCapWords"
+            android:maxLength="24"
+            android:textColor="@color/tinta"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/boton_alias"
+            style="@style/Boton.Lleno"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/intercambio_continuar" />
+    </LinearLayout>
+
+    <!-- Paso: elegir palabras -->
+    <LinearLayout
+        android:id="@+id/paso_elegir"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ListView
+            android:id="@+id/lista_ofrecer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:divider="@null" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="28dp"
+            android:paddingVertical="12dp">
+
+            <TextView
+                android:id="@+id/contador_elegidas"
+                style="@style/Texto.Etiqueta"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/boton_elegir"
+                style="@style/Boton.Lleno"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/intercambio_continuar" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Paso: emparejar -->
+    <LinearLayout
+        android:id="@+id/paso_emparejar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tu_codigo"
+            style="@style/Texto.Subtitulo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="28dp"
+            android:paddingTop="20dp" />
+
+        <TextView
+            android:id="@+id/aviso_nfc"
+            style="@style/Texto.Secundario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="28dp"
+            android:paddingTop="6dp"
+            android:text="@string/intercambio_nfc"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/estado_busqueda"
+            style="@style/Texto.Etiqueta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="28dp"
+            android:paddingTop="22dp"
+            android:text="@string/intercambio_buscando" />
+
+        <ListView
+            android:id="@+id/lista_vecinos"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:divider="@null" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="28dp"
+            android:paddingBottom="16dp">
+
+            <Button
+                android:id="@+id/boton_nfc"
+                style="@style/Boton.Linea"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:text="@string/intercambio_nfc_boton"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/boton_usar_codigo"
+                style="@style/Boton.Linea"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/intercambio_usar_codigo" />
+
+            <LinearLayout
+                android:id="@+id/caja_codigo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/campo_codigo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:autofillHints=""
+                    android:fontFamily="@font/texto"
+                    android:hint="@string/intercambio_codigo_pista"
+                    android:inputType="text"
+                    android:maxLength="16"
+                    android:textColor="@color/tinta" />
+
+                <Button
+                    android:id="@+id/boton_conectar"
+                    style="@style/Boton.Linea"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/intercambio_conectar" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Paso: confirmar el código -->
+    <LinearLayout
+        android:id="@+id/paso_confirmar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="28dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/codigo_confirmacion"
+            style="@style/Texto.Palabra"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:letterSpacing="0.2"
+            android:textSize="46sp" />
+
+        <Button
+            android:id="@+id/boton_confirmar_codigo"
+            style="@style/Boton.Lleno"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="@string/intercambio_confirmar" />
+
+        <Button
+            android:id="@+id/boton_cancelar_codigo"
+            style="@style/Boton.Linea"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/intercambio_cancelar" />
+    </LinearLayout>
+
+    <!-- Paso: la oferta del otro -->
+    <LinearLayout
+        android:id="@+id/paso_oferta"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ListView
+            android:id="@+id/lista_oferta"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:divider="@null" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="28dp"
+            android:paddingVertical="12dp">
+
+            <Button
+                android:id="@+id/boton_rechazar"
+                style="@style/Boton.Linea"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/intercambio_rechazar" />
+
+            <Button
+                android:id="@+id/boton_aceptar"
+                style="@style/Boton.Lleno"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:text="@string/intercambio_aceptar" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Paso: resultado -->
+    <LinearLayout
+        android:id="@+id/paso_final"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingHorizontal="28dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/resumen_final"
+            style="@style/Texto.Cuerpo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp" />
+
+        <Button
+            android:id="@+id/boton_final"
+            style="@style/Boton.Lleno"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:text="@string/intercambio_cerrar" />
+    </LinearLayout>
+    </FrameLayout>
+</LinearLayout>

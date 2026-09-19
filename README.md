@@ -22,6 +22,9 @@ vez que apagas la pantalla, así que al volver a encenderla ya tienes una nueva 
   mostrado todas.
 - **56 404 palabras** de [Wikcionario](https://es.wiktionary.org), sin vulgarismos ni términos
   despectivos.
+- **Intercambio en la red local**: dos teléfonos en la misma Wi-Fi se encuentran solos (o se emparejan
+  acercándolos por NFC, o con un código), cada uno elige qué palabras ofrece y ambos aceptan lo que
+  reciben. Las palabras recibidas quedan anotadas con el alias de quien las envió.
 - **Botón para detener la app** por completo.
 
 ## Requisitos
@@ -125,6 +128,12 @@ puntos están activos.
   del diccionario.
 - **Base de datos.** SQLite de solo lectura con Room, precargada desde
   `app/src/main/assets/databases/diccionario.db`.
+- **Intercambio.** Solo funciona dentro de la red local: la app rechaza cualquier dirección que no
+  sea privada. Los teléfonos se anuncian con NSD (mDNS) y hablan por un socket TCP con un protocolo de
+  texto propio, una línea por mensaje. El anfitrión genera un código de 6 dígitos que ambos ven y
+  tienen que confirmar. Por NFC solo viaja la dirección y el puerto: un teléfono hace de tarjeta
+  (`HostApduService`) y el otro de lector, porque Android Beam ya no existe. Todo vive mientras la
+  pantalla está abierta: al salir se cierran el anuncio y el puerto.
 - **Colección.** Va en una base aparte (`favoritas.db`) y cada palabra guarda su propia copia del
   texto, la categoría y la definición. La base del diccionario se reemplaza entera al actualizarlo, y
   los ids cambian; así la colección no se pierde. El orden alfabético se calcula en la app: SQLite
@@ -136,6 +145,11 @@ puntos están activos.
   (Samsung) la pantalla de bloqueo solo admite widgets de apps de Samsung. Se puede poner con
   Good Lock y LockStar (la app incluye un tutorial); en modelos que no admiten Good Lock existe
   FineLock, que no es oficial. En cualquier marca queda la notificación con la palabra.
+- **Intercambio.** Necesita que las dos personas estén en la misma Wi-Fi. Algunas redes (de
+  invitados, públicas o con «aislamiento de clientes») bloquean el descubrimiento e incluso la
+  conexión directa; para esos casos están el NFC y el código. El NFC además exige que los dos
+  teléfonos lo tengan y estén desbloqueados. En Android 16 el acceso a la red local todavía es libre,
+  pero el permiso `NEARBY_WIFI_DEVICES` lo gobernará en versiones futuras: la app ya lo pide.
 - **Notificación.** Mientras la palabra cambia al apagar la pantalla, Android obliga a mostrar una
   notificación. Para que no haya ninguna, desactiva ese interruptor: el widget pasará a cambiar al
   tocarlo o cada 30 minutos.
@@ -151,7 +165,9 @@ app/src/main/java/app/widgetdiccionario/
 ├── TutorialSamsungActivity.kt   Tutorial de Good Lock, LockStar y FineLock
 ├── OtraMarcaActivity.kt         Requisitos para otras marcas, con su estado
 ├── Ajustes.kt                   Preferencias y estado del mazo
+├── IntercambioActivity.kt       Intercambio de palabras entre dos teléfonos
 ├── data/                        Room (diccionario y colección), OrdenAlfabetico y Mazo
+├── intercambio/                 Protocolo, sockets, NSD y emparejamiento por NFC
 ├── pantalla/                    PantallaService, NotificacionPalabra, ArranqueReceiver
 └── widget/                      PalabraWidgetProvider, ActualizadorWidget y EstiloWidget
 app/src/test/                    Tests del mazo, la colección y las pantallas (Robolectric)

@@ -4,7 +4,7 @@ import android.content.Context
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-/** Operaciones sobre las favoritas compartidas por el widget y la app. */
+/** Operaciones sobre la colección de palabras, compartidas por el widget y la app. */
 object Favoritas {
 
     /** Evita que dos toques seguidos en la estrella lean el mismo estado y se pisen. */
@@ -33,9 +33,25 @@ object Favoritas {
         dao(context).quitar(favorita.palabra)
     }
 
-    /** Vuelve a guardar una favorita recién quitada, conservando su fecha original. */
+    /** Vuelve a guardar una palabra recién quitada, conservando su fecha y su origen. */
     suspend fun restaurar(context: Context, favorita: Favorita) = mutex.withLock {
         dao(context).guardar(favorita)
+    }
+
+    /**
+     * Guarda las palabras recibidas en un intercambio, anotando de quién vinieron. Las que ya están en
+     * la colección no se tocan: conservan su fecha y su origen.
+     */
+    suspend fun recibir(context: Context, palabras: List<Favorita>, de: String): Int = mutex.withLock {
+        val dao = dao(context)
+        var guardadas = 0
+        palabras.forEach { palabra ->
+            if (!dao.esFavorita(palabra.palabra)) {
+                dao.guardar(palabra.copy(agregadaEn = System.currentTimeMillis(), origen = de))
+                guardadas++
+            }
+        }
+        guardadas
     }
 
     private fun dao(context: Context) = FavoritasDatabase.get(context).favoritaDao()

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Identificador propio para el emparejamiento por NFC: no es de pago ni sustituye a ninguna tarjeta. -->
+<host-apdu-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:apduServiceBanner="@drawable/ic_notificacion"
+    android:description="@string/nfc_descripcion"
+    android:requireDeviceUnlock="false">
+
+    <aid-group
+        android:category="other"
+        android:description="@string/nfc_descripcion">
+        <aid-filter android:name="F0506F6C696D61746961" />
+    </aid-group>
+</host-apdu-service>

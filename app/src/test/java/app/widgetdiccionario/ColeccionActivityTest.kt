@@ -28,6 +28,7 @@ class ColeccionActivityTest {
 
     @Before
     fun preparar() = runBlocking {
+        FavoritasDatabase.cerrarParaPruebas()
         dao.todas().forEach { dao.quitar(it.palabra) }
         guardar("anemoia", 2)
         guardar("baldaquino", 1)

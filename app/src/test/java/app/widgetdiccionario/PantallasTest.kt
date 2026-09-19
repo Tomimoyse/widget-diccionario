@@ -1,5 +1,6 @@
 package app.widgetdiccionario
 
+import android.app.Activity
 import android.content.Context
 import android.os.Looper
 import android.view.View
@@ -31,6 +32,9 @@ class PantallasTest {
 
     @Before
     fun preparar() = Ajustes.setEstiloWidget(contexto, EstiloWidget.PREDETERMINADO)
+
+    private fun elegida(actividad: Activity) = actividad.findViewById<TextView>(R.id.contador_elegidas)
+        .text.toString().substringAfter(": ")
 
     /** Las pantallas cargan sus datos en segundo plano: se deja avanzar el hilo principal mientras tanto. */
     private fun esperar(condicion: () -> Boolean) {
@@ -102,6 +106,7 @@ class PantallasTest {
             val dao = FavoritasDatabase.get(contexto).favoritaDao()
             dao.todas().forEach { dao.quitar(it.palabra) }
             dao.guardar(Favorita("anemoia", "f.", "Nostalgia de un tiempo no vivido.", 1))
+            dao.guardar(Favorita("baldaquino", "m.", "Dosel sobre columnas.", 1))
         }
 
         ActivityScenario.launch(IntercambioActivity::class.java).use { escenario ->
@@ -118,9 +123,18 @@ class PantallasTest {
                 assertFalse(continuar.isEnabled)
 
                 val lista = actividad.findViewById<ListView>(R.id.lista_ofrecer)
-                esperar { lista.adapter.count == 1 }
+                esperar { lista.adapter.count == 2 }
                 lista.performItemClick(lista.adapter.getView(0, null, lista), 0, 0)
                 assertTrue(continuar.isEnabled)
+                assertEquals("anemoia", elegida(actividad))
+
+                // Solo se ofrece una palabra: elegir otra reemplaza a la anterior.
+                lista.performItemClick(lista.adapter.getView(1, null, lista), 1, 0)
+                assertEquals("baldaquino", elegida(actividad))
+
+                // El buscador filtra la lista.
+                actividad.findViewById<EditText>(R.id.buscador_ofrecer).setText("anem")
+                esperar { lista.adapter.count == 1 }
             }
         }
     }

@@ -38,9 +38,23 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp" />
 
+            <EditText
+                android:id="@+id/buscador"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:autofillHints=""
+                android:fontFamily="@font/texto"
+                android:hint="@string/coleccion_buscar"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:maxLines="1"
+                android:textColor="@color/tinta"
+                android:textSize="16sp" />
+
             <View
                 style="@style/Linea"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="12dp" />
         </LinearLayout>
 
         <TextView

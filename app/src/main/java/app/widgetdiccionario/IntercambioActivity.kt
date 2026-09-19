@@ -12,10 +12,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.Button
-import android.widget.CheckBox
+import android.widget.RadioButton
 import android.widget.EditText
 import android.widget.ListView
 import android.widget.TextView
+import androidx.core.widget.addTextChangedListener
 import app.widgetdiccionario.data.Favorita
 import app.widgetdiccionario.data.Favoritas
 import app.widgetdiccionario.data.OrdenAlfabetico
@@ -50,7 +51,6 @@ class IntercambioActivity : Activity() {
 
     private val scope = MainScope()
     private val adaptadorColeccion = AdaptadorColeccion()
-    private val adaptadorVecinos = AdaptadorVecinos()
     private val adaptadorOferta = AdaptadorOferta()
 
     private var descubridor: Descubridor? = null
@@ -59,20 +59,23 @@ class IntercambioActivity : Activity() {
     private var decision: CompletableDeferred<Boolean>? = null
     private var direccionPropia: Inet4Address? = null
 
+    /** Una vez que hay con quién hablar, se ignora cualquier otro teléfono que aparezca. */
+    private var yaHayCita = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_intercambio)
         findViewById<ListView>(R.id.lista_ofrecer).apply {
             adapter = adaptadorColeccion
-            setOnItemClickListener { _, _, posicion, _ -> adaptadorColeccion.alternar(posicion) }
+            setOnItemClickListener { _, _, posicion, _ -> adaptadorColeccion.elegir(posicion) }
         }
-        findViewById<ListView>(R.id.lista_vecinos).apply {
-            adapter = adaptadorVecinos
-            setOnItemClickListener { _, _, posicion, _ -> conectarCon(adaptadorVecinos.getItem(posicion)) }
+        findViewById<EditText>(R.id.buscador_ofrecer).addTextChangedListener {
+            adaptadorColeccion.buscar(it?.toString().orEmpty())
         }
         findViewById<ListView>(R.id.lista_oferta).adapter = adaptadorOferta
 
         findViewById<Button>(R.id.boton_alias).setOnClickListener { guardarAlias() }
+        findViewById<EditText>(R.id.campo_alias).setText(Ajustes.alias(this))
         findViewById<Button>(R.id.boton_elegir).setOnClickListener { empezarAEmparejar() }
         findViewById<Button>(R.id.boton_usar_codigo).setOnClickListener {
             findViewById<View>(R.id.caja_codigo).visibility = View.VISIBLE
@@ -89,6 +92,16 @@ class IntercambioActivity : Activity() {
             adaptadorColeccion.cargar(Favoritas.todas(this@IntercambioActivity))
             if (Ajustes.alias(this@IntercambioActivity).isBlank()) irA(Paso.ALIAS) else irA(Paso.ELEGIR)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        NfcEmparejamiento.preferirNuestraTarjeta(this)
+    }
+
+    override fun onPause() {
+        NfcEmparejamiento.dejarDePreferir(this)
+        super.onPause()
     }
 
     override fun onDestroy() {
@@ -143,18 +156,20 @@ class IntercambioActivity : Activity() {
     }
 
     private fun actualizarContador() {
-        findViewById<TextView>(R.id.contador_elegidas).text =
-            resources.getQuantityString(
-                R.plurals.intercambio_elegidas,
-                adaptadorColeccion.elegidas().size,
-                adaptadorColeccion.elegidas().size,
-            )
-        findViewById<Button>(R.id.boton_elegir).isEnabled = adaptadorColeccion.elegidas().isNotEmpty()
+        val elegida = adaptadorColeccion.elegida()
+        findViewById<TextView>(R.id.contador_elegidas).text = elegida
+            ?.let { getString(R.string.intercambio_elegida, it.palabra) }
+            ?: getString(R.string.intercambio_sin_elegir)
+        findViewById<Button>(R.id.boton_elegir).apply {
+            isEnabled = elegida != null
+            alpha = if (elegida != null) 1f else 0.4f
+        }
     }
 
     // --- Emparejar ---
 
     private fun empezarAEmparejar() {
+        yaHayCita = false
         irA(Paso.EMPAREJAR)
         pedirPermisoDeRedLocal()
         avisarSiNoHayWifi()
@@ -178,7 +193,7 @@ class IntercambioActivity : Activity() {
         val alias = Ajustes.alias(this)
         Descubridor(this).also { descubridor = it }.apply {
             anunciarse(alias, servidor.puerto)
-            buscar { vecino -> scope.launch { if (!esUnoMismo(vecino)) adaptadorVecinos.agregar(vecino) } }
+            buscar { vecino -> scope.launch { alEncontrar(vecino) } }
         }
 
         // Queda esperando a que el otro teléfono se conecte.
@@ -219,6 +234,22 @@ class IntercambioActivity : Activity() {
     private fun esUnoMismo(vecino: Vecino) =
         vecino.puerto == anfitrion?.puerto && vecino.direccion.hostAddress == direccionPropia?.hostAddress
 
+    /**
+     * Al aparecer el otro teléfono se conecta solo. Los dos se ven a la vez, así que para no cruzarse
+     * conecta siempre el de la dirección "menor" y el otro se queda esperando.
+     */
+    private fun alEncontrar(vecino: Vecino) {
+        if (yaHayCita || esUnoMismo(vecino)) return
+        yaHayCita = true
+        findViewById<TextView>(R.id.estado_busqueda).apply {
+            visibility = View.VISIBLE
+            text = getString(R.string.intercambio_conectando, vecino.alias)
+        }
+        val miClave = "${direccionPropia?.hostAddress}:${anfitrion?.puerto}"
+        val suClave = "${vecino.direccion.hostAddress}:${vecino.puerto}"
+        if (miClave < suClave) conectarCon(vecino)
+    }
+
     private fun conectarCon(vecino: Vecino) {
         trabajo?.cancel()
         trabajo = scope.launch {
@@ -251,7 +282,9 @@ class IntercambioActivity : Activity() {
         soltarRed()
         val sesion = Sesion(canal, anfitrion)
         val alias = Ajustes.alias(this)
-        val ofrecidas = adaptadorColeccion.elegidas().map { PalabraOfrecida(it.palabra, it.categoria, it.definicion) }
+        val ofrecidas = adaptadorColeccion.elegida()
+            ?.let { listOf(PalabraOfrecida(it.palabra, it.categoria, it.definicion)) }
+            .orEmpty()
         try {
             val saludo = withContext(Dispatchers.IO) { sesion.saludar(alias) }
             mostrarCodigo(saludo)
@@ -268,7 +301,7 @@ class IntercambioActivity : Activity() {
             val acepto = esperarDecision()
             val guardadas = withContext(Dispatchers.IO) {
                 sesion.responder(acepto)
-                val guardadas = if (acepto) {
+                if (acepto) {
                     Favoritas.recibir(
                         this@IntercambioActivity,
                         oferta.map { Favorita(it.palabra, it.categoria, it.definicion, 0) },
@@ -277,10 +310,9 @@ class IntercambioActivity : Activity() {
                 } else {
                     0
                 }
-                guardadas
             }
             val elOtroAcepto = withContext(Dispatchers.IO) { sesion.esperarRespuesta().also { sesion.despedirse() } }
-            mostrarFinal(saludo.alias, guardadas, elOtroAcepto)
+            mostrarFinal(saludo.alias, guardadas, oferta.firstOrNull()?.palabra, elOtroAcepto)
         } catch (e: Sesion.ErrorDeIntercambio) {
             withContext(Dispatchers.IO) { runCatching { sesion.despedirse() } }
             mostrarError(e.message.orEmpty())
@@ -306,12 +338,12 @@ class IntercambioActivity : Activity() {
         irA(Paso.OFERTA)
     }
 
-    private fun mostrarFinal(alias: String, guardadas: Int, elOtroAcepto: Boolean) {
+    private fun mostrarFinal(alias: String, guardadas: Int, palabraRecibida: String?, elOtroAcepto: Boolean) {
         encabezado(R.string.intercambio_final_titulo, "")
         val resumen = buildString {
             append(
-                if (guardadas > 0) {
-                    resources.getQuantityString(R.plurals.intercambio_guardadas, guardadas, guardadas, alias)
+                if (guardadas > 0 && palabraRecibida != null) {
+                    getString(R.string.intercambio_guardada, palabraRecibida, alias)
                 } else {
                     getString(R.string.intercambio_guardadas_ninguna)
                 },
@@ -386,23 +418,31 @@ class IntercambioActivity : Activity() {
     // --- Listas ---
 
     private inner class AdaptadorColeccion : BaseAdapter() {
-        private val palabras = mutableListOf<Favorita>()
-        private val elegidas = mutableSetOf<String>()
+        private val todas = mutableListOf<Favorita>()
+        private var palabras = emptyList<Favorita>()
+        private var elegida: String? = null
 
         fun cargar(nuevas: List<Favorita>) {
-            palabras.clear()
-            palabras.addAll(nuevas.sortedWith(OrdenAlfabetico.comparadorDePalabras))
+            todas.clear()
+            todas.addAll(nuevas.sortedWith(OrdenAlfabetico.comparadorDePalabras))
+            palabras = todas.toList()
             notifyDataSetChanged()
         }
 
-        fun alternar(posicion: Int) {
+        fun buscar(consulta: String) {
+            palabras = todas.filter { OrdenAlfabetico.coincide(it, consulta) }
+            notifyDataSetChanged()
+        }
+
+        /** Se ofrece una sola palabra por intercambio: elegir otra reemplaza a la anterior. */
+        fun elegir(posicion: Int) {
             val palabra = palabras[posicion].palabra
-            if (!elegidas.remove(palabra)) elegidas.add(palabra)
+            elegida = if (elegida == palabra) null else palabra
             notifyDataSetChanged()
             actualizarContador()
         }
 
-        fun elegidas() = palabras.filter { it.palabra in elegidas }
+        fun elegida() = todas.firstOrNull { it.palabra == elegida }
 
         override fun getCount() = palabras.size
         override fun getItem(position: Int) = palabras[position]
@@ -414,29 +454,7 @@ class IntercambioActivity : Activity() {
             val palabra = palabras[position]
             vista.findViewById<TextView>(R.id.item_palabra).text = palabra.palabra
             vista.findViewById<TextView>(R.id.item_definicion).text = palabra.definicion
-            vista.findViewById<CheckBox>(R.id.item_elegida).isChecked = palabra.palabra in elegidas
-            return vista
-        }
-    }
-
-    private inner class AdaptadorVecinos : BaseAdapter() {
-        private val vecinos = mutableListOf<Vecino>()
-
-        fun agregar(vecino: Vecino) {
-            if (vecinos.any { it.direccion == vecino.direccion && it.puerto == vecino.puerto }) return
-            vecinos.add(vecino)
-            notifyDataSetChanged()
-            findViewById<TextView>(R.id.estado_busqueda).visibility = View.GONE
-        }
-
-        override fun getCount() = vecinos.size
-        override fun getItem(position: Int) = vecinos[position]
-        override fun getItemId(position: Int) = position.toLong()
-
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            val vista = convertView
-                ?: LayoutInflater.from(parent.context).inflate(R.layout.item_vecino, parent, false)
-            vista.findViewById<TextView>(R.id.item_vecino).text = vecinos[position].alias
+            vista.findViewById<RadioButton>(R.id.item_elegida).isChecked = palabra.palabra == elegida
             return vista
         }
     }
@@ -460,7 +478,7 @@ class IntercambioActivity : Activity() {
             val palabra = palabras[position]
             vista.findViewById<TextView>(R.id.item_palabra).text = palabra.palabra
             vista.findViewById<TextView>(R.id.item_definicion).text = palabra.definicion
-            vista.findViewById<CheckBox>(R.id.item_elegida).visibility = View.GONE
+            vista.findViewById<RadioButton>(R.id.item_elegida).visibility = View.GONE
             return vista
         }
     }

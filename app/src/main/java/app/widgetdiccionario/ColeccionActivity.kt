@@ -9,9 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ListView
 import android.widget.TextView
+import androidx.core.widget.addTextChangedListener
 import app.widgetdiccionario.data.Favorita
 import app.widgetdiccionario.data.Favoritas
 import app.widgetdiccionario.data.OrdenAlfabetico
@@ -44,6 +46,10 @@ class ColeccionActivity : Activity() {
         barraDeshacer = findViewById(R.id.barra_deshacer)
         textoDeshacer = findViewById(R.id.texto_deshacer)
         findViewById<ListView>(R.id.lista_coleccion).adapter = adaptador
+        findViewById<EditText>(R.id.buscador).addTextChangedListener { texto ->
+            adaptador.buscar(texto?.toString().orEmpty())
+            actualizarEncabezado()
+        }
     }
 
     override fun onResume() {
@@ -62,8 +68,15 @@ class ColeccionActivity : Activity() {
 
     private fun actualizarEncabezado() {
         val total = adaptador.cantidadDePalabras()
+        val mostradas = adaptador.cantidadMostrada()
         cantidad.text = resources.getQuantityString(R.plurals.coleccion_cantidad, total, total)
-        vacia.visibility = if (total == 0) View.VISIBLE else View.GONE
+        val consulta = findViewById<EditText>(R.id.buscador).text.toString()
+        vacia.visibility = if (mostradas == 0) View.VISIBLE else View.GONE
+        vacia.text = when {
+            total == 0 -> getString(R.string.coleccion_vacia)
+            else -> getString(R.string.coleccion_sin_resultados, consulta.trim())
+        }
+        findViewById<EditText>(R.id.buscador).visibility = if (total == 0) View.GONE else View.VISIBLE
     }
 
     private fun quitar(favorita: Favorita) = scope.launch {
@@ -102,12 +115,21 @@ class ColeccionActivity : Activity() {
     private inner class Adaptador : BaseAdapter() {
         private val palabras = mutableListOf<Favorita>()
         private var filas = emptyList<Fila>()
+        private var consulta = ""
 
         fun cargar(nuevas: List<Favorita>) {
             palabras.clear()
             palabras.addAll(nuevas)
             rehacerFilas()
         }
+
+        fun buscar(texto: String) {
+            consulta = texto
+            rehacerFilas()
+        }
+
+        /** Cuántas se ven con la búsqueda actual. */
+        fun cantidadMostrada() = filas.count { it is Fila.Palabra }
 
         /** Solo toca la lista (no la base de datos). Devuelve false si ya no estaba. */
         fun sacarDeLaLista(favorita: Favorita): Boolean {
@@ -127,7 +149,7 @@ class ColeccionActivity : Activity() {
             palabras.sortWith(OrdenAlfabetico.comparadorDePalabras)
             val nuevas = mutableListOf<Fila>()
             var letraActual: String? = null
-            palabras.forEach { favorita ->
+            palabras.filter { OrdenAlfabetico.coincide(it, consulta) }.forEach { favorita ->
                 val letra = OrdenAlfabetico.letraInicial(favorita.palabra)
                 if (letra != letraActual) {
                     nuevas.add(Fila.Letra(letra))

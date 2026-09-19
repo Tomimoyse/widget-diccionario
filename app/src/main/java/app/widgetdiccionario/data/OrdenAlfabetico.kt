@@ -33,4 +33,21 @@ object OrdenAlfabetico {
     }
 
     const val OTROS = "#"
+
+    /** Texto comparable: sin tildes ni mayúsculas, para que «arbol» encuentre «árbol». */
+    fun normalizar(texto: String): String = Normalizer.normalize(texto.lowercase(ESPANOL), Normalizer.Form.NFD)
+        .filterNot { it.isMark() }
+
+    /** Una palabra coincide si lo buscado aparece en ella o en su definición. */
+    fun coincide(favorita: Favorita, consulta: String): Boolean {
+        val buscado = normalizar(consulta).trim()
+        if (buscado.isEmpty()) return true
+        return normalizar(favorita.palabra).contains(buscado) ||
+            normalizar(favorita.definicion).contains(buscado)
+    }
+
+    private fun Char.isMark() = when (Character.getType(this).toByte()) {
+        Character.NON_SPACING_MARK, Character.COMBINING_SPACING_MARK, Character.ENCLOSING_MARK -> true
+        else -> false
+    }
 }

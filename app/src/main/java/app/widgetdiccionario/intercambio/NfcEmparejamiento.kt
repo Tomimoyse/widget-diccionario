@@ -1,8 +1,11 @@
 package app.widgetdiccionario.intercambio
 
 import android.app.Activity
+import android.content.ComponentName
 import android.content.Context
 import android.nfc.NfcAdapter
+import android.nfc.NfcManager
+import android.nfc.cardemulation.CardEmulation
 import android.nfc.cardemulation.HostApduService
 import android.nfc.tech.IsoDep
 import android.os.Bundle
@@ -45,7 +48,31 @@ object NfcEmparejamiento {
 
     private const val PREFIJO = "polimatia:"
 
-    fun disponible(context: Context) = NfcAdapter.getDefaultAdapter(context)?.isEnabled == true
+    fun disponible(context: Context) = adaptador(context)?.isEnabled == true
+
+    /** Vía NfcManager: en Android 16 NfcAdapter.getDefaultAdapter(context) devolvió null en el teléfono. */
+    private fun adaptador(context: Context): NfcAdapter? =
+        context.getSystemService(NfcManager::class.java)?.defaultAdapter ?: NfcAdapter.getDefaultAdapter(context)
+
+    /**
+     * Mientras esta pantalla está al frente, el sistema entrega los toques a nuestro servicio sin
+     * preguntar: sin esto, Android muestra un diálogo para elegir entre las apps que usan NFC.
+     */
+    fun preferirNuestraTarjeta(actividad: Activity) {
+        val adaptador = adaptador(actividad) ?: return
+        val emulacion = CardEmulation.getInstance(adaptador) ?: return
+        runCatching {
+            emulacion.setPreferredService(
+                actividad,
+                ComponentName(actividad, ServicioNfcIntercambio::class.java),
+            )
+        }
+    }
+
+    fun dejarDePreferir(actividad: Activity) {
+        val adaptador = adaptador(actividad) ?: return
+        runCatching { CardEmulation.getInstance(adaptador)?.unsetPreferredService(actividad) }
+    }
 
     /** Lo que este teléfono ofrece por NFC mientras espera una conexión. */
     fun anunciar(direccion: InetAddress, puerto: Int) {
@@ -58,7 +85,7 @@ object NfcEmparejamiento {
 
     /** Pone el teléfono en modo lector: al acercar el otro, [alLeer] recibe dirección y puerto. */
     fun leer(actividad: Activity, alLeer: (InetAddress, Int) -> Unit) {
-        val adaptador = NfcAdapter.getDefaultAdapter(actividad) ?: return
+        val adaptador = adaptador(actividad) ?: return
         adaptador.enableReaderMode(
             actividad,
             { etiqueta ->
@@ -76,7 +103,7 @@ object NfcEmparejamiento {
     }
 
     fun dejarDeLeer(actividad: Activity) {
-        NfcAdapter.getDefaultAdapter(actividad)?.disableReaderMode(actividad)
+        adaptador(actividad)?.disableReaderMode(actividad)
     }
 
     /** Respuesta esperada: el texto del emparejamiento seguido de 0x9000. */

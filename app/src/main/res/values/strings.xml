@@ -89,12 +89,11 @@
     <string name="intercambio_alias_pista">Tu nombre</string>
     <string name="intercambio_continuar">Continuar</string>
 
-    <string name="intercambio_elegir_titulo">¿Qué palabras ofreces?</string>
-    <string name="intercambio_elegir_desc">Marca las que quieras darle a la otra persona. Ella también elige las suyas.</string>
-    <plurals name="intercambio_elegidas">
-        <item quantity="one">%1$d elegida</item>
-        <item quantity="other">%1$d elegidas</item>
-    </plurals>
+    <string name="intercambio_elegir_titulo">¿Qué palabra ofreces?</string>
+    <string name="intercambio_elegir_desc">Elige una palabra para darle a la otra persona. Ella también elige la suya.</string>
+    <string name="intercambio_elegida">Elegida: %1$s</string>
+    <string name="intercambio_sin_elegir">Ninguna elegida</string>
+    <string name="intercambio_buscar">Buscar palabra</string>
     <string name="intercambio_sin_coleccion">Tu colección está vacía: guarda alguna palabra con la estrella del widget antes de intercambiar.</string>
 
     <string name="intercambio_emparejar_titulo">Acerca los dos teléfonos</string>
@@ -116,14 +115,12 @@
     <string name="intercambio_cancelar">Cancelar</string>
 
     <string name="intercambio_oferta_titulo">«%1$s» te ofrece</string>
+    <string name="intercambio_conectando">Conectando con «%1$s»…</string>
     <string name="intercambio_aceptar">Aceptar</string>
     <string name="intercambio_rechazar">Rechazar</string>
 
     <string name="intercambio_final_titulo">Listo</string>
-    <plurals name="intercambio_guardadas">
-        <item quantity="one">Guardaste %1$d palabra de «%2$s».</item>
-        <item quantity="other">Guardaste %1$d palabras de «%2$s».</item>
-    </plurals>
+    <string name="intercambio_guardada">Guardaste «%1$s» de «%2$s».</string>
     <string name="intercambio_guardadas_ninguna">No guardaste ninguna palabra.</string>
     <string name="intercambio_el_otro_acepto">«%1$s» aceptó tus palabras.</string>
     <string name="intercambio_el_otro_rechazo">«%1$s» no aceptó tus palabras.</string>
@@ -138,6 +135,8 @@
     </plurals>
     <string name="coleccion_quitada">Quitaste «%1$s»</string>
     <string name="coleccion_deshacer">Deshacer</string>
+    <string name="coleccion_buscar">Buscar en tu colección</string>
+    <string name="coleccion_sin_resultados">Ninguna palabra coincide con «%1$s».</string>
     <string name="coleccion_vacia">Tu colección está vacía. Toca la estrella del widget para guardar la palabra que estás viendo.</string>
 
     <string name="main_boton_detener">Detener la app</string>

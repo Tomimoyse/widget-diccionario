@@ -3,6 +3,7 @@ package app.widgetdiccionario
 import android.content.Context
 import android.os.Looper
 import android.view.View
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ListView
 import android.widget.TextView
@@ -102,6 +103,34 @@ class ColeccionActivityTest {
                 )
                 // Cada grupo abre con su letra; lo que no empieza por letra va a "#".
                 assertEquals(listOf("#", "A", "B", "Ñ"), letras(lista))
+            }
+        }
+    }
+
+    @Test
+    fun elBuscadorEncuentraSinImportarLasTildes() {
+        runBlocking {
+            dao.todas().forEach { dao.quitar(it.palabra) }
+            listOf("árbol", "azul", "ñandú").forEach { guardar(it, 1) }
+        }
+        ActivityScenario.launch(ColeccionActivity::class.java).use { escenario ->
+            escenario.onActivity { actividad ->
+                val lista = actividad.findViewById<ListView>(R.id.lista_coleccion)
+                val buscador = actividad.findViewById<EditText>(R.id.buscador)
+                esperarHasta { palabras(lista).size == 3 }
+
+                buscador.setText("arbol")
+                esperarHasta { palabras(lista) == listOf("árbol") }
+
+                buscador.setText("NANDU")
+                esperarHasta { palabras(lista) == listOf("ñandú") }
+
+                // También busca dentro de la definición.
+                buscador.setText("definición de azul")
+                esperarHasta { palabras(lista) == listOf("azul") }
+
+                buscador.setText("")
+                esperarHasta { palabras(lista).size == 3 }
             }
         }
     }

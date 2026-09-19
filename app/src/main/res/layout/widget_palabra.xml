@@ -74,7 +74,7 @@
                     android:layout_height="48dp"
                     android:layout_marginVertical="-12dp"
                     android:layout_marginEnd="-13dp"
-                    android:contentDescription="@string/favorita_marcar"
+                    android:contentDescription="@string/coleccion_guardar_palabra"
                     android:padding="11dp"
                     android:src="@drawable/ic_estrella_vacia" />
             </LinearLayout>

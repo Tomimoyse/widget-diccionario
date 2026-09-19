@@ -30,7 +30,7 @@ class PantallasTest {
     fun todasLasPantallasAbren() {
         listOf(
             MainActivity::class.java,
-            FavoritasActivity::class.java,
+            ColeccionActivity::class.java,
             EstiloWidgetActivity::class.java,
             PantallaBloqueoActivity::class.java,
             TutorialSamsungActivity::class.java,

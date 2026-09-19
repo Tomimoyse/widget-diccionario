@@ -95,7 +95,7 @@ object ActualizadorWidget {
             setImageViewResource(R.id.estrella, if (favorita) R.drawable.ic_estrella_llena else R.drawable.ic_estrella_vacia)
             setContentDescription(
                 R.id.estrella,
-                context.getString(if (favorita) R.string.favorita_quitar else R.string.favorita_marcar),
+                context.getString(if (favorita) R.string.coleccion_quitar_palabra else R.string.coleccion_guardar_palabra),
             )
             // El toque en la estrella tiene su propio PendingIntent, que prevalece sobre el del fondo.
             setOnClickPendingIntent(R.id.estrella, intentFavorita(context, palabra))

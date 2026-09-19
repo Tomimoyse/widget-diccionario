@@ -58,8 +58,8 @@ class MainActivity : Activity() {
 
         findViewById<Button>(R.id.boton_nueva).setOnClickListener { mostrarOtra() }
         findViewById<Button>(R.id.boton_detener).setOnClickListener { confirmarDetener() }
-        findViewById<Button>(R.id.boton_favoritas).setOnClickListener {
-            startActivity(Intent(this, FavoritasActivity::class.java))
+        findViewById<Button>(R.id.boton_coleccion).setOnClickListener {
+            startActivity(Intent(this, ColeccionActivity::class.java))
         }
         findViewById<View>(R.id.fila_estilo).setOnClickListener {
             startActivity(Intent(this, EstiloWidgetActivity::class.java))
@@ -94,9 +94,9 @@ class MainActivity : Activity() {
         super.onResume()
         scope.launch {
             val cantidad = Favoritas.contar(this@MainActivity)
-            findViewById<Button>(R.id.boton_favoritas).text =
-                if (cantidad == 0) getString(R.string.main_boton_favoritas)
-                else getString(R.string.main_boton_favoritas_cantidad, cantidad)
+            findViewById<Button>(R.id.boton_coleccion).text =
+                if (cantidad == 0) getString(R.string.main_boton_coleccion)
+                else getString(R.string.main_boton_coleccion_cantidad, cantidad)
         }
         // Desde una Activity visible el arranque en primer plano siempre está permitido.
         PantallaService.iniciarSiCorresponde(this)

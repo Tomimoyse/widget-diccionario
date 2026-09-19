@@ -99,13 +99,13 @@
                 android:text="@string/main_boton_nueva" />
 
             <Button
-                android:id="@+id/boton_favoritas"
+                android:id="@+id/boton_coleccion"
                 style="@style/Boton.Linea"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_weight="1"
-                android:text="@string/main_boton_favoritas" />
+                android:text="@string/main_boton_coleccion" />
         </LinearLayout>
 
         <!-- Personalizar -->

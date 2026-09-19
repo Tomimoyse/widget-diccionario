@@ -20,8 +20,8 @@
     <string name="main_switch_notificacion">Mostrar la palabra en la notificación</string>
     <string name="main_switch_notificacion_desc">Así también la ves en la pantalla de bloqueo. Si la desactivas queda una notificación mínima y oculta, porque Android la exige mientras la app trabaja en segundo plano.</string>
 
-    <string name="main_boton_favoritas">Favoritas</string>
-    <string name="main_boton_favoritas_cantidad">Favoritas · %1$d</string>
+    <string name="main_boton_coleccion">Colección</string>
+    <string name="main_boton_coleccion_cantidad">Colección · %1$d</string>
 
     <string name="marca_pregunta">¿De qué marca es tu celular?</string>
     <string name="marca_samsung">Samsung</string>
@@ -76,16 +76,16 @@
     <string name="color_celeste">Celeste</string>
     <string name="color_rosa">Rosa</string>
 
-    <string name="favorita_marcar">Marcar como favorita</string>
-    <string name="favorita_quitar">Quitar de favoritas</string>
-    <string name="favoritas_titulo">Favoritas</string>
-    <plurals name="favoritas_cantidad">
+    <string name="coleccion_guardar_palabra">Guardar en la colección</string>
+    <string name="coleccion_quitar_palabra">Quitar de la colección</string>
+    <string name="coleccion_titulo">Colección</string>
+    <plurals name="coleccion_cantidad">
         <item quantity="one">%1$d palabra guardada</item>
         <item quantity="other">%1$d palabras guardadas</item>
     </plurals>
-    <string name="favoritas_quitada">Quitaste «%1$s»</string>
-    <string name="favoritas_deshacer">Deshacer</string>
-    <string name="favoritas_vacia">Todavía no tienes palabras favoritas. Toca la estrella del widget para guardar la palabra que estás viendo.</string>
+    <string name="coleccion_quitada">Quitaste «%1$s»</string>
+    <string name="coleccion_deshacer">Deshacer</string>
+    <string name="coleccion_vacia">Tu colección está vacía. Toca la estrella del widget para guardar la palabra que estás viendo.</string>
 
     <string name="main_boton_detener">Detener la app</string>
     <string name="main_boton_detener_desc">Cierra la app y su proceso en segundo plano. Tus ajustes se conservan: vuelve a funcionar al abrir la app, tocar el widget o reiniciar el teléfono.</string>

@@ -23,9 +23,9 @@
         </activity>
 
         <activity
-            android:name=".FavoritasActivity"
+            android:name=".ColeccionActivity"
             android:exported="false"
-            android:label="@string/favoritas_titulo" />
+            android:label="@string/coleccion_titulo" />
 
         <activity
             android:name=".EstiloWidgetActivity"

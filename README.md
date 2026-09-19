@@ -7,8 +7,8 @@ vez que apagas la pantalla, así que al volver a encenderla ya tienes una nueva 
 
 - **Widget** translúcido para la pantalla de inicio, con colores dinámicos del sistema. Al tocarlo
   muestra otra palabra.
-- **Favoritas**: la estrella del widget guarda la palabra que estás viendo, y la app tiene una
-  sección con todas las marcadas.
+- **Colección**: la estrella del widget guarda la palabra que estás viendo, y la app tiene una
+  sección con todas las guardadas, en orden alfabético español y agrupadas por letra inicial.
 - **Estilo del widget** configurable: color y transparencia del fondo, color y tamaño de la letra,
   con vista previa en vivo. Los cambios se aplican al tocar «Confirmar».
 - **Pantalla de bloqueo**: la app pregunta la marca del celular. En Samsung explica cómo poner el
@@ -125,9 +125,10 @@ puntos están activos.
   del diccionario.
 - **Base de datos.** SQLite de solo lectura con Room, precargada desde
   `app/src/main/assets/databases/diccionario.db`.
-- **Favoritas.** Van en una base aparte (`favoritas.db`) y cada una guarda su propia copia de la
-  palabra, la categoría y la definición. La base del diccionario se reemplaza entera al actualizarlo,
-  y los ids cambian; así las favoritas no se pierden.
+- **Colección.** Va en una base aparte (`favoritas.db`) y cada palabra guarda su propia copia del
+  texto, la categoría y la definición. La base del diccionario se reemplaza entera al actualizarlo, y
+  los ids cambian; así la colección no se pierde. El orden alfabético se calcula en la app: SQLite
+  ordena por bytes y mandaría «árbol» o «ñandú» al final.
 
 ## Limitaciones conocidas
 
@@ -144,16 +145,16 @@ puntos están activos.
 ```
 app/src/main/java/app/widgetdiccionario/
 ├── MainActivity.kt              Pantalla principal y botón de detener
-├── FavoritasActivity.kt         Lista de palabras favoritas
+├── ColeccionActivity.kt         Colección de palabras guardadas
 ├── EstiloWidgetActivity.kt      Personalización del widget con vista previa
 ├── PantallaBloqueoActivity.kt   Pregunta la marca del celular
 ├── TutorialSamsungActivity.kt   Tutorial de Good Lock, LockStar y FineLock
 ├── OtraMarcaActivity.kt         Requisitos para otras marcas, con su estado
 ├── Ajustes.kt                   Preferencias y estado del mazo
-├── data/                        Room (diccionario y favoritas), Favoritas y Mazo
+├── data/                        Room (diccionario y colección), OrdenAlfabetico y Mazo
 ├── pantalla/                    PantallaService, NotificacionPalabra, ArranqueReceiver
 └── widget/                      PalabraWidgetProvider, ActualizadorWidget y EstiloWidget
-app/src/test/                    Tests del mazo y de las pantallas (Robolectric)
+app/src/test/                    Tests del mazo, la colección y las pantallas (Robolectric)
 tools/
 ├── importar_wikcionario.py      Wikcionario (kaikki.org) → palabras_wikcionario.tsv
 ├── build_db.py                  TSV → diccionario.db

@@ -34,19 +34,22 @@ object RedLocal {
         }
     }
 
-    /** IPv4 propia en la Wi-Fi, para mostrarla o armar el código de conexión manual. */
+    /**
+     * IPv4 propia **en la Wi-Fi**, para mostrarla o armar el código de conexión manual. Null si no hay
+     * Wi-Fi: la dirección de los datos móviles también es privada (10.x) y llevaría a intentar un
+     * intercambio que nunca podría funcionar.
+     */
     fun direccionPropia(context: Context): Inet4Address? {
-        val redes = context.getSystemService(ConnectivityManager::class.java)
-        val deLaWifi = redWifi(context)
-            ?.let { redes?.getLinkProperties(it) }
+        val redes = context.getSystemService(ConnectivityManager::class.java) ?: return null
+        return redWifi(context)
+            ?.let { redes.getLinkProperties(it) }
             ?.linkAddresses
             ?.map { it.address }
             ?.filterIsInstance<Inet4Address>()
             ?.firstOrNull { it.isSiteLocalAddress }
-        return deLaWifi ?: direccionPropia()
     }
 
-    /** Sin contexto: recorre las interfaces de red. Se usa en pruebas y como respaldo. */
+    /** Sin contexto: recorre las interfaces de red. Se usa en pruebas. */
     fun direccionPropia(): Inet4Address? = NetworkInterface.getNetworkInterfaces()
         ?.toList()
         ?.asSequence()

@@ -21,7 +21,8 @@ import app.widgetdiccionario.data.OrdenAlfabetico
 import app.widgetdiccionario.intercambio.Anfitrion
 import app.widgetdiccionario.intercambio.Canal
 import app.widgetdiccionario.intercambio.Descubridor
-import app.widgetdiccionario.intercambio.NfcEmparejamiento
+import app.widgetdiccionario.intercambio.IntercambioNfc
+import app.widgetdiccionario.intercambio.PaqueteNfc
 import app.widgetdiccionario.intercambio.PalabraOfrecida
 import app.widgetdiccionario.intercambio.RedLocal
 import app.widgetdiccionario.intercambio.Sesion
@@ -60,6 +61,10 @@ class IntercambioActivity : Activity() {
     /** Una vez que hay con quién hablar, se ignora cualquier otro teléfono que aparezca. */
     private var yaHayCita = false
 
+    /** Lo que este teléfono entrega por NFC, y si ya empezó un intercambio (por red o por toque). */
+    private var paqueteNfc: PaqueteNfc? = null
+    private var intercambioEnCurso = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_intercambio)
@@ -94,11 +99,11 @@ class IntercambioActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
-        NfcEmparejamiento.preferirNuestraTarjeta(this)
+        IntercambioNfc.preferirNuestraTarjeta(this)
     }
 
     override fun onPause() {
-        NfcEmparejamiento.dejarDePreferir(this)
+        IntercambioNfc.dejarDePreferir(this)
         super.onPause()
     }
 
@@ -169,26 +174,23 @@ class IntercambioActivity : Activity() {
     private fun empezarAEmparejar() {
         yaHayCita = false
         irA(Paso.EMPAREJAR)
-        pedirPermisoDeRedLocal()
-        avisarSiNoHayWifi()
-        direccionPropia = RedLocal.direccionPropia(this)
+        val alias = Ajustes.alias(this)
+        val ofrecida = adaptadorColeccion.elegida() ?: return
+        // Por NFC viaja la palabra entera: ese camino no necesita Wi-Fi.
+        prepararNfc(PaqueteNfc(alias, PalabraOfrecida(ofrecida.palabra, ofrecida.categoria, ofrecida.definicion)))
 
-        val servidor = runCatching { Anfitrion() }.getOrNull()
-        if (servidor == null) {
-            mostrarError(getString(R.string.intercambio_sin_wifi))
+        pedirPermisoDeRedLocal()
+        direccionPropia = RedLocal.direccionPropia(this)
+        val propia = direccionPropia
+        val servidor = if (propia == null) null else runCatching { Anfitrion() }.getOrNull()
+        if (servidor == null || propia == null) {
+            soloPorNfc()
             return
         }
         anfitrion = servidor
-        val propia = direccionPropia
-        findViewById<TextView>(R.id.tu_codigo).text = if (propia == null) {
-            getString(R.string.intercambio_sin_wifi)
-        } else {
+        findViewById<TextView>(R.id.tu_codigo).text =
             getString(R.string.intercambio_tu_codigo, RedLocal.codigoDeConexion(propia, servidor.puerto))
-        }
 
-        prepararNfc(propia, servidor.puerto)
-
-        val alias = Ajustes.alias(this)
         Descubridor(this).also { descubridor = it }.apply {
             anunciarse(alias, servidor.puerto)
             buscar { vecino -> scope.launch { alEncontrar(vecino) } }
@@ -198,36 +200,63 @@ class IntercambioActivity : Activity() {
         trabajo = scope.launch {
             val canal = withContext(Dispatchers.IO) { runCatching { servidor.esperarConexion() }.getOrNull() }
             // Si nos acaban de leer por NFC, la conexión viene de ese toque y el código sobra.
-            if (canal != null) intercambiar(canal, anfitrion = true, porNfc = NfcEmparejamiento.huboToqueReciente())
+            if (canal != null) intercambiar(canal, anfitrion = true)
         }
     }
 
-    /** Con NFC este teléfono queda como "tarjeta"; el botón lo pasa a lector para leer al otro. */
-    private fun prepararNfc(propia: Inet4Address?, puerto: Int) {
-        if (propia == null || !NfcEmparejamiento.disponible(this)) return
-        NfcEmparejamiento.anunciar(propia, puerto)
+    /** Este teléfono queda como "tarjeta"; el botón lo pasa a lector para leer al otro. */
+    private fun prepararNfc(paquete: PaqueteNfc) {
+        paqueteNfc = paquete
+        if (!IntercambioNfc.disponible(this)) return
+        IntercambioNfc.ofrecer(paquete) { recibido -> scope.launch { recibirPorNfc(recibido) } }
         findViewById<View>(R.id.aviso_nfc).visibility = View.VISIBLE
         findViewById<View>(R.id.boton_nfc).visibility = View.VISIBLE
     }
 
+    /** Sin Wi-Fi el intercambio todavía es posible acercando los teléfonos. */
+    private fun soloPorNfc() {
+        findViewById<View>(R.id.tu_codigo).visibility = View.GONE
+        findViewById<View>(R.id.aviso_nfc).visibility = View.GONE
+        findViewById<View>(R.id.estado_busqueda).visibility = View.GONE
+        findViewById<View>(R.id.boton_usar_codigo).visibility = View.GONE
+        findViewById<TextView>(R.id.detalle_paso).setText(
+            if (IntercambioNfc.disponible(this)) {
+                R.string.intercambio_solo_nfc
+            } else {
+                R.string.intercambio_sin_wifi_ni_nfc
+            },
+        )
+    }
+
     private fun leerPorNfc() {
+        val paquete = paqueteNfc ?: return
         findViewById<TextView>(R.id.estado_busqueda).apply {
             visibility = View.VISIBLE
             setText(R.string.intercambio_nfc_esperando)
         }
-        NfcEmparejamiento.leer(this) { direccion, puerto ->
-            scope.launch {
-                NfcEmparejamiento.dejarDeLeer(this@IntercambioActivity)
-                val canal = withContext(Dispatchers.IO) {
-                    runCatching { Visitante.conectar(this@IntercambioActivity, direccion, puerto) }.getOrNull()
-                }
-                if (canal == null) {
-                    mostrarError(getString(R.string.intercambio_error, ""))
-                } else {
-                    intercambiar(canal, anfitrion = false, porNfc = true)
-                }
+        IntercambioNfc.leer(this, paquete) { recibido -> scope.launch { recibirPorNfc(recibido) } }
+    }
+
+    /** Llegó la palabra del otro por NFC: no hay más diálogo, solo aceptarla o no. */
+    private suspend fun recibirPorNfc(recibido: PaqueteNfc) {
+        if (intercambioEnCurso) return
+        intercambioEnCurso = true
+        IntercambioNfc.dejarDeLeer(this)
+        soltarRed()
+        mostrarOferta(recibido.alias, listOf(recibido.palabra))
+        val acepto = esperarDecision()
+        val guardadas = if (acepto) {
+            withContext(Dispatchers.IO) {
+                Favoritas.recibir(
+                    this@IntercambioActivity,
+                    listOf(Favorita(recibido.palabra.palabra, recibido.palabra.categoria, recibido.palabra.definicion, 0)),
+                    de = recibido.alias,
+                )
             }
+        } else {
+            0
         }
+        mostrarFinal(recibido.alias, guardadas, recibido.palabra.palabra, acepto, elOtroAcepto = null)
     }
 
     private fun esUnoMismo(vecino: Vecino) =
@@ -277,7 +306,9 @@ class IntercambioActivity : Activity() {
 
     // --- El intercambio ---
 
-    private suspend fun intercambiar(canal: Canal, anfitrion: Boolean, porNfc: Boolean = false) {
+    private suspend fun intercambiar(canal: Canal, anfitrion: Boolean) {
+        if (intercambioEnCurso) return
+        intercambioEnCurso = true
         soltarRed()
         val sesion = Sesion(canal, anfitrion)
         val alias = Ajustes.alias(this)
@@ -286,14 +317,11 @@ class IntercambioActivity : Activity() {
             .orEmpty()
         try {
             val saludo = withContext(Dispatchers.IO) { sesion.saludar(alias) }
-            // Acercar los teléfonos ya es la confirmación: no se pide comparar el número.
-            if (!porNfc) {
-                mostrarCodigo(saludo)
-                if (!esperarDecision()) {
-                    withContext(Dispatchers.IO) { sesion.despedirse() }
-                    finish()
-                    return
-                }
+            mostrarCodigo(saludo)
+            if (!esperarDecision()) {
+                withContext(Dispatchers.IO) { sesion.despedirse() }
+                finish()
+                return
             }
             val oferta = withContext(Dispatchers.IO) {
                 sesion.ofrecer(ofrecidas)
@@ -351,7 +379,7 @@ class IntercambioActivity : Activity() {
         guardadas: Int,
         palabraRecibida: String?,
         acepto: Boolean,
-        elOtroAcepto: Boolean,
+        elOtroAcepto: Boolean?,
     ) {
         encabezado(R.string.intercambio_final_titulo, "")
         val resumen = buildString {
@@ -367,10 +395,11 @@ class IntercambioActivity : Activity() {
             )
             append("\n")
             append(
-                if (elOtroAcepto) {
-                    getString(R.string.intercambio_el_otro_acepto, alias)
-                } else {
-                    getString(R.string.intercambio_el_otro_rechazo, alias)
+                when (elOtroAcepto) {
+                    true -> getString(R.string.intercambio_el_otro_acepto, alias)
+                    false -> getString(R.string.intercambio_el_otro_rechazo, alias)
+                    // Por NFC no hay vuelta de respuesta: solo se sabe si se llevó la palabra.
+                    null -> getString(R.string.intercambio_tu_palabra_viajo)
                 },
             )
         }
@@ -417,9 +446,8 @@ class IntercambioActivity : Activity() {
     }
 
     private fun soltarRed() {
-        NfcEmparejamiento.dejarDeAnunciar()
-        NfcEmparejamiento.olvidarToque()
-        runCatching { NfcEmparejamiento.dejarDeLeer(this) }
+        IntercambioNfc.dejarDeOfrecer()
+        runCatching { IntercambioNfc.dejarDeLeer(this) }
         descubridor?.detener()
         descubridor = null
         anfitrion?.close()

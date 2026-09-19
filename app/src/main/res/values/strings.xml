@@ -101,6 +101,9 @@
     <string name="intercambio_buscando">Buscando otros teléfonos…</string>
     <string name="intercambio_tu_codigo">Tu código: %1$s</string>
     <string name="intercambio_sin_wifi">No estás conectado a una red Wi-Fi.</string>
+    <string name="intercambio_solo_nfc">Sin Wi-Fi solo puedes intercambiar acercando los teléfonos.</string>
+    <string name="intercambio_sin_wifi_ni_nfc">Necesitas Wi-Fi para intercambiar por la red, o NFC para hacerlo acercando los teléfonos.</string>
+    <string name="intercambio_tu_palabra_viajo">Tu palabra viajó al otro teléfono.</string>
     <string name="intercambio_usar_codigo">Conectar con un código</string>
     <string name="intercambio_codigo_pista">Código del otro teléfono</string>
     <string name="intercambio_conectar">Conectar</string>

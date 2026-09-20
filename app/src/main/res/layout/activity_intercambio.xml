@@ -163,10 +163,12 @@
             android:paddingTop="22dp"
             android:text="@string/intercambio_buscando" />
 
-        <View
+        <ListView
+            android:id="@+id/lista_vecinos"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:divider="@null" />
 
 
         <LinearLayout

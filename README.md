@@ -24,7 +24,8 @@ vez que apagas la pantalla, así que al volver a encenderla ya tienes una nueva 
 - **56 404 palabras** de [Wikcionario](https://es.wiktionary.org), sin vulgarismos ni términos
   despectivos.
 - **Intercambio de palabras**, de dos maneras: por la **red local**, si los dos están en la misma
-  Wi-Fi (se encuentran y se conectan solos, o con un código), o **acercando los teléfonos por NFC**,
+  Wi-Fi (aparecen listados y eliges con quién, o te conectas con un código), o **acercando los
+  teléfonos por NFC**,
   que no necesita red alguna. Cada uno elige **una** palabra y acepta la que recibe; las recibidas
   quedan anotadas con el alias de quien las envió.
 - **Botón para detener la app** por completo.
@@ -134,13 +135,14 @@ puntos están activos.
   sea privada y ata los sockets a la red Wi-Fi, porque si el teléfono tiene los datos móviles como red
   por defecto la conexión saldría por ahí. Los teléfonos se anuncian con NSD (mDNS) y hablan por un
   socket TCP con un protocolo de texto propio, una línea por mensaje. El anfitrión genera un código de
-  6 dígitos que ambos ven y tienen que confirmar. Los dos se descubren a la vez, así que para no
-  cruzarse conecta el de la dirección «menor» y el otro espera. Todo vive mientras la pantalla está
-  abierta: al salir se cierran el anuncio y el puerto.
+  6 dígitos que ambos ven y tienen que confirmar. Todo vive mientras la pantalla está abierta: al
+  salir se cierran el anuncio y el puerto.
 - **Intercambio por NFC.** La palabra entera viaja en el toque, sin red: un teléfono hace de tarjeta
   (`HostApduService`) y el otro de lector, porque Android Beam ya no existe. El lector entrega su
   palabra en trozos y se lleva la de la tarjeta en la misma operación, así que un solo acercamiento
-  completa el intercambio y no hace falta confirmar ningún código. Mientras la pantalla está al
+  completa el intercambio y no hace falta confirmar ningún código. En modo lector el teléfono deja de
+  poder ser leído: por eso alcanza con que uno de los dos toque el botón, y por si los dos lo tocan, el
+  lector se apaga unos instantes cada tanto (con pausas irregulares) para dejarse leer. Mientras la pantalla está al
   frente, la app se declara servicio NFC preferente (`CardEmulation.setPreferredService`); sin eso
   Android pregunta con qué app atender el toque.
 - **Colección.** Va en una base aparte (`favoritas.db`) y cada palabra guarda su propia copia del

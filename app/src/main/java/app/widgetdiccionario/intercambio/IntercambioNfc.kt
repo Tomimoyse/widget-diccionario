@@ -11,6 +11,7 @@ import android.nfc.tech.IsoDep
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 
 /**
  * Intercambio acercando los teléfonos, sin Wi-Fi ni red de por medio: la palabra entera viaja en el
@@ -25,14 +26,16 @@ class ServicioNfcIntercambio : HostApduService() {
             esSelect(apdu) -> {
                 recibidos.clear()
                 entregoTodo = false
+                Log.i(TAG, "tarjeta: nos seleccionaron (palabra propia lista: ${propio != null})")
                 OK
             }
 
-            propio == null -> ERROR
             apdu.size >= 5 && apdu[1] == INS_ENVIAR -> recibirTrozo(apdu)
+            // Para entregar hace falta haber elegido palabra; recibir se puede igual.
+            propio == null -> ERROR.also { Log.w(TAG, "nos piden la palabra y no hay ninguna elegida") }
             apdu.size >= 4 && apdu[1] == INS_TOTAL -> byteArrayOf(trozosPropios().size.toByte()) + OK
             apdu.size >= 4 && apdu[1] == INS_PEDIR -> entregarTrozo(apdu[2].toInt())
-            else -> ERROR
+            else -> ERROR.also { Log.w(TAG, "comando NFC desconocido: ${apdu.joinToString("") { "%02X".format(it) }.take(12)}") }
         }
     }
 
@@ -44,9 +47,11 @@ class ServicioNfcIntercambio : HostApduService() {
         val largo = apdu[4].toInt() and 0xFF
         if (total <= 0 || indice !in 0 until total || apdu.size < 5 + largo) return ERROR
         recibidos[indice] = apdu.copyOfRange(5, 5 + largo)
+        Log.i(TAG, "tarjeta: trozo ${indice + 1} de $total recibido")
         if (recibidos.size == total) {
             val paquete = PaqueteNfc.desdeBytes(PaqueteNfc.unirTrozos((0 until total).map { recibidos[it]!! }))
             recibidos.clear()
+            Log.i(TAG, "tarjeta: paquete completo (entendido: ${paquete != null}, hay quien escuche: ${alRecibir != null})")
             if (paquete != null) principal.post { alRecibir?.invoke(paquete) }
         }
         return OK
@@ -66,6 +71,7 @@ class ServicioNfcIntercambio : HostApduService() {
     private fun trozosPropios() = propio?.trozos().orEmpty()
 
     companion object {
+        const val TAG = "IntercambioNfc"
         const val AID = "F0506F6C696D61746961"
         const val INS_ENVIAR: Byte = 0x10
         const val INS_PEDIR: Byte = 0x20
@@ -132,8 +138,40 @@ object IntercambioNfc {
         runCatching { CardEmulation.getInstance(adaptador)?.unsetPreferredService(actividad) }
     }
 
-    /** Pasa a modo lector: al acercar el otro teléfono se entrega [propio] y se recibe lo suyo. */
+    /**
+     * Pasa a modo lector: al acercar el otro teléfono se entrega [propio] y se recibe lo suyo.
+     *
+     * En modo lector el teléfono deja de poder ser leído, así que si los dos tocan el botón no pasaría
+     * nada. Por eso el lector se apaga unos instantes cada tanto, con pausas de duración irregular para
+     * que los dos no queden siempre en el mismo estado.
+     */
     fun leer(actividad: Activity, propio: PaqueteNfc, alRecibir: (PaqueteNfc) -> Unit) {
+        enCiclo = true
+        activarLector(actividad, propio, alRecibir)
+        programarPausa(actividad, propio, alRecibir)
+    }
+
+    private fun programarPausa(actividad: Activity, propio: PaqueteNfc, alRecibir: (PaqueteNfc) -> Unit) {
+        principal.postDelayed(
+            {
+                if (!enCiclo) return@postDelayed
+                adaptador(actividad)?.disableReaderMode(actividad)
+                principal.postDelayed(
+                    {
+                        if (!enCiclo) return@postDelayed
+                        activarLector(actividad, propio, alRecibir)
+                        programarPausa(actividad, propio, alRecibir)
+                    },
+                    PAUSA_MS + azar(),
+                )
+            },
+            LECTURA_MS + azar(),
+        )
+    }
+
+    private fun azar() = (0..600L).random()
+
+    private fun activarLector(actividad: Activity, propio: PaqueteNfc, alRecibir: (PaqueteNfc) -> Unit) {
         val adaptador = adaptador(actividad) ?: return
         adaptador.enableReaderMode(
             actividad,
@@ -142,9 +180,10 @@ object IntercambioNfc {
                 runCatching {
                     iso.timeout = ESPERA_MS
                     iso.connect()
+                    Log.i(TAG, "lector: tarjeta en rango (APDU extendido: ${iso.isExtendedLengthApduSupported})")
                     val recibido = conversar(iso, propio)
                     if (recibido != null) alRecibir(recibido)
-                }
+                }.onFailure { Log.w(TAG, "lector: se cortó el toque", it) }
                 runCatching { iso.close() }
             },
             NfcAdapter.FLAG_READER_NFC_A or NfcAdapter.FLAG_READER_NFC_B or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK,
@@ -153,24 +192,42 @@ object IntercambioNfc {
     }
 
     fun dejarDeLeer(actividad: Activity) {
+        enCiclo = false
+        principal.removeCallbacksAndMessages(null)
         adaptador(actividad)?.disableReaderMode(actividad)
     }
 
     /** El diálogo completo con la tarjeta: saludar, entregar lo propio y pedir lo suyo. */
     private fun conversar(iso: IsoDep, propio: PaqueteNfc): PaqueteNfc? {
-        datos(iso.transceive(select())) ?: return null
+        if (datos(iso.transceive(select())) == null) {
+            Log.w(TAG, "lector: la otra punta no respondió al saludo")
+            return null
+        }
 
         val mios = propio.trozos()
         mios.forEachIndexed { indice, trozo ->
-            datos(iso.transceive(comando(ServicioNfcIntercambio.INS_ENVIAR, indice, mios.size, trozo))) ?: return null
+            if (datos(iso.transceive(comando(ServicioNfcIntercambio.INS_ENVIAR, indice, mios.size, trozo))) == null) {
+                Log.w(TAG, "lector: no aceptaron el trozo ${indice + 1} de ${mios.size}")
+                return null
+            }
         }
+        Log.i(TAG, "lector: entregamos nuestra palabra en ${mios.size} trozo(s)")
 
-        val total = datos(iso.transceive(comando(ServicioNfcIntercambio.INS_TOTAL)))?.firstOrNull()?.toInt() ?: return null
-        if (total !in 1..MAXIMO_TROZOS) return null
-        val suyos = (0 until total).map { indice ->
-            datos(iso.transceive(comando(ServicioNfcIntercambio.INS_PEDIR, indice))) ?: return null
+        val respuestaTotal = iso.transceive(comando(ServicioNfcIntercambio.INS_TOTAL))
+        val total = datos(respuestaTotal)?.firstOrNull()?.toInt()
+        if (total == null || total !in 1..MAXIMO_TROZOS) {
+            Log.w(TAG, "lector: no nos dicen cuántos trozos tienen (respuesta: ${respuestaTotal?.joinToString("") { "%02X".format(it) }})")
+            return null
         }
-        return PaqueteNfc.desdeBytes(PaqueteNfc.unirTrozos(suyos))
+        val suyos = (0 until total).map { indice ->
+            datos(iso.transceive(comando(ServicioNfcIntercambio.INS_PEDIR, indice))) ?: run {
+                Log.w(TAG, "lector: nos faltó el trozo ${indice + 1} de $total")
+                return null
+            }
+        }
+        val paquete = PaqueteNfc.desdeBytes(PaqueteNfc.unirTrozos(suyos))
+        Log.i(TAG, "lector: recibimos $total trozo(s) (entendido: ${paquete != null})")
+        return paquete
     }
 
     /** Separa los datos del código de resultado; null si la tarjeta no respondió que todo fue bien. */
@@ -189,6 +246,16 @@ object IntercambioNfc {
         return byteArrayOf(0x00, 0xA4.toByte(), 0x04, 0x00, aid.size.toByte()) + aid + byteArrayOf(0x00)
     }
 
+    private val principal = Handler(Looper.getMainLooper())
+
+    @Volatile
+    private var enCiclo = false
+
+    private const val TAG = "IntercambioNfc"
     private const val ESPERA_MS = 3_000
+
+    /** Cuánto escucha y cuánto se deja leer en cada vuelta. */
+    private const val LECTURA_MS = 1_200L
+    private const val PAUSA_MS = 700L
     private const val MAXIMO_TROZOS = 32
 }

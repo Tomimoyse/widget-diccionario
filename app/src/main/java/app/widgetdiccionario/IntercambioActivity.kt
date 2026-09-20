@@ -50,6 +50,7 @@ class IntercambioActivity : Activity() {
 
     private val scope = MainScope()
     private val adaptadorColeccion = AdaptadorColeccion()
+    private val adaptadorVecinos = AdaptadorVecinos()
     private val adaptadorOferta = AdaptadorOferta()
 
     private var descubridor: Descubridor? = null
@@ -59,8 +60,6 @@ class IntercambioActivity : Activity() {
     private var direccionPropia: Inet4Address? = null
 
     /** Una vez que hay con quién hablar, se ignora cualquier otro teléfono que aparezca. */
-    private var yaHayCita = false
-
     /** Lo que este teléfono entrega por NFC, y si ya empezó un intercambio (por red o por toque). */
     private var paqueteNfc: PaqueteNfc? = null
     private var intercambioEnCurso = false
@@ -74,6 +73,10 @@ class IntercambioActivity : Activity() {
         }
         findViewById<EditText>(R.id.buscador_ofrecer).addTextChangedListener {
             adaptadorColeccion.buscar(it?.toString().orEmpty())
+        }
+        findViewById<ListView>(R.id.lista_vecinos).apply {
+            adapter = adaptadorVecinos
+            setOnItemClickListener { _, _, posicion, _ -> conectarCon(adaptadorVecinos.getItem(posicion)) }
         }
         findViewById<ListView>(R.id.lista_oferta).adapter = adaptadorOferta
 
@@ -172,7 +175,6 @@ class IntercambioActivity : Activity() {
     // --- Emparejar ---
 
     private fun empezarAEmparejar() {
-        yaHayCita = false
         irA(Paso.EMPAREJAR)
         val alias = Ajustes.alias(this)
         val ofrecida = adaptadorColeccion.elegida() ?: return
@@ -262,23 +264,16 @@ class IntercambioActivity : Activity() {
     private fun esUnoMismo(vecino: Vecino) =
         vecino.puerto == anfitrion?.puerto && vecino.direccion.hostAddress == direccionPropia?.hostAddress
 
-    /**
-     * Al aparecer el otro teléfono se conecta solo. Los dos se ven a la vez, así que para no cruzarse
-     * conecta siempre el de la dirección "menor" y el otro se queda esperando.
-     */
+    /** Aparece en la lista; el intercambio empieza cuando tocas su nombre. */
     private fun alEncontrar(vecino: Vecino) {
-        if (yaHayCita || esUnoMismo(vecino)) return
-        yaHayCita = true
-        findViewById<TextView>(R.id.estado_busqueda).apply {
-            visibility = View.VISIBLE
-            text = getString(R.string.intercambio_conectando, vecino.alias)
-        }
-        val miClave = "${direccionPropia?.hostAddress}:${anfitrion?.puerto}"
-        val suClave = "${vecino.direccion.hostAddress}:${vecino.puerto}"
-        if (miClave < suClave) conectarCon(vecino)
+        if (esUnoMismo(vecino) || !adaptadorVecinos.agregar(vecino)) return
+        findViewById<TextView>(R.id.estado_busqueda).setText(R.string.intercambio_elegir_persona)
     }
 
     private fun conectarCon(vecino: Vecino) {
+        if (intercambioEnCurso) return
+        findViewById<TextView>(R.id.estado_busqueda).text =
+            getString(R.string.intercambio_conectando, vecino.alias)
         trabajo?.cancel()
         trabajo = scope.launch {
             val canal = withContext(Dispatchers.IO) {
@@ -445,8 +440,11 @@ class IntercambioActivity : Activity() {
         }
     }
 
+    /**
+     * Suelta lo de la red. La oferta por NFC se mantiene: el otro teléfono la recoge justo después de
+     * entregarnos la suya, y borrarla aquí dejaba el toque a medias.
+     */
     private fun soltarRed() {
-        IntercambioNfc.dejarDeOfrecer()
         runCatching { IntercambioNfc.dejarDeLeer(this) }
         descubridor?.detener()
         descubridor = null
@@ -458,6 +456,7 @@ class IntercambioActivity : Activity() {
         trabajo?.cancel()
         trabajo = null
         soltarRed()
+        IntercambioNfc.dejarDeOfrecer()
     }
 
     // --- Listas ---
@@ -500,6 +499,29 @@ class IntercambioActivity : Activity() {
             vista.findViewById<TextView>(R.id.item_palabra).text = palabra.palabra
             vista.findViewById<TextView>(R.id.item_definicion).text = palabra.definicion
             vista.findViewById<RadioButton>(R.id.item_elegida).isChecked = palabra.palabra == elegida
+            return vista
+        }
+    }
+
+    private inner class AdaptadorVecinos : BaseAdapter() {
+        private val vecinos = mutableListOf<Vecino>()
+
+        /** False si ya estaba en la lista. */
+        fun agregar(vecino: Vecino): Boolean {
+            if (vecinos.any { it.direccion == vecino.direccion && it.puerto == vecino.puerto }) return false
+            vecinos.add(vecino)
+            notifyDataSetChanged()
+            return true
+        }
+
+        override fun getCount() = vecinos.size
+        override fun getItem(position: Int) = vecinos[position]
+        override fun getItemId(position: Int) = position.toLong()
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+            val vista = convertView
+                ?: LayoutInflater.from(parent.context).inflate(R.layout.item_vecino, parent, false)
+            vista.findViewById<TextView>(R.id.item_vecino).text = vecinos[position].alias
             return vista
         }
     }

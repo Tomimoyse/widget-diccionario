@@ -99,6 +99,7 @@
     <string name="intercambio_emparejar_titulo">Acerca los dos teléfonos</string>
     <string name="intercambio_emparejar_desc">Los dos tienen que estar en la misma red Wi-Fi y con esta pantalla abierta.</string>
     <string name="intercambio_buscando">Buscando otros teléfonos…</string>
+    <string name="intercambio_elegir_persona">Toca a la persona con quien quieras intercambiar</string>
     <string name="intercambio_tu_codigo">Tu código: %1$s</string>
     <string name="intercambio_sin_wifi">No estás conectado a una red Wi-Fi.</string>
     <string name="intercambio_solo_nfc">Sin Wi-Fi solo puedes intercambiar acercando los teléfonos.</string>
@@ -109,8 +110,8 @@
     <string name="intercambio_conectar">Conectar</string>
     <string name="nfc_descripcion">Emparejar el intercambio de palabras de Polimatía</string>
     <string name="intercambio_nfc_boton">Acercar los teléfonos (NFC)</string>
-    <string name="intercambio_nfc_esperando">Acerca la parte de atrás de los dos teléfonos…</string>
-    <string name="intercambio_nfc">También puedes acercar los teléfonos por NFC.</string>
+    <string name="intercambio_nfc_esperando">Acerca la parte de atrás de los dos teléfonos… (el otro no necesita tocar nada)</string>
+    <string name="intercambio_nfc">También puedes acercar los teléfonos por NFC: basta con que uno de los dos toque el botón.</string>
 
     <string name="intercambio_confirmar_titulo">¿Ves el mismo número?</string>
     <string name="intercambio_confirmar_desc">Conectaste con «%1$s». Este número tiene que ser igual en los dos teléfonos.</string>

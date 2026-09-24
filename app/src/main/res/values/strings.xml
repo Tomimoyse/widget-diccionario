@@ -8,6 +8,7 @@
 
     <string name="main_palabra_del_momento">Palabra del momento</string>
     <string name="main_pie">Diccionario del español</string>
+    <string name="main_seccion_compartir">Compartir</string>
     <string name="main_seccion_personalizar">Personalizar</string>
     <string name="main_seccion_funcionamiento">Funcionamiento</string>
     <string name="main_fila_estilo">Estilo del widget</string>
@@ -20,8 +21,8 @@
     <string name="main_switch_notificacion">Mostrar la palabra en la notificación</string>
     <string name="main_switch_notificacion_desc">Así también la ves en la pantalla de bloqueo. Si la desactivas queda una notificación mínima y oculta, porque Android la exige mientras la app trabaja en segundo plano.</string>
 
-    <string name="main_boton_favoritas">Favoritas</string>
-    <string name="main_boton_favoritas_cantidad">Favoritas · %1$d</string>
+    <string name="main_boton_coleccion">Colección</string>
+    <string name="main_boton_coleccion_cantidad">Colección · %1$d</string>
 
     <string name="marca_pregunta">¿De qué marca es tu celular?</string>
     <string name="marca_samsung">Samsung</string>
@@ -76,16 +77,73 @@
     <string name="color_celeste">Celeste</string>
     <string name="color_rosa">Rosa</string>
 
-    <string name="favorita_marcar">Marcar como favorita</string>
-    <string name="favorita_quitar">Quitar de favoritas</string>
-    <string name="favoritas_titulo">Favoritas</string>
-    <plurals name="favoritas_cantidad">
+    <string name="coleccion_guardar_palabra">Guardar en la colección</string>
+    <string name="coleccion_quitar_palabra">Quitar de la colección</string>
+    <!-- Intercambio -->
+    <string name="main_fila_intercambio">Intercambiar palabras</string>
+    <string name="main_fila_intercambio_desc">Con otro celular en la misma red Wi-Fi</string>
+    <string name="intercambio_titulo">Intercambiar</string>
+
+    <string name="intercambio_alias_titulo">¿Cómo te llamamos?</string>
+    <string name="intercambio_alias_desc">Este nombre es el que verá la otra persona, y queda anotado en las palabras que le envíes.</string>
+    <string name="intercambio_alias_pista">Tu nombre</string>
+    <string name="intercambio_continuar">Continuar</string>
+
+    <string name="intercambio_elegir_titulo">¿Qué palabra ofreces?</string>
+    <string name="intercambio_elegir_desc">Elige una palabra para darle a la otra persona. Ella también elige la suya.</string>
+    <string name="intercambio_elegida">Elegida: %1$s</string>
+    <string name="intercambio_sin_elegir">Ninguna elegida</string>
+    <string name="intercambio_buscar">Buscar palabra</string>
+    <string name="intercambio_sin_coleccion">Tu colección está vacía: guarda alguna palabra con la estrella del widget antes de intercambiar.</string>
+
+    <string name="intercambio_emparejar_titulo">Acerca los dos teléfonos</string>
+    <string name="intercambio_emparejar_desc">Los dos tienen que estar en la misma red Wi-Fi y con esta pantalla abierta.</string>
+    <string name="intercambio_buscando">Buscando otros teléfonos…</string>
+    <string name="intercambio_elegir_persona">Toca a la persona con quien quieras intercambiar</string>
+    <string name="intercambio_tu_codigo">Tu código: %1$s</string>
+    <string name="intercambio_sin_wifi">No estás conectado a una red Wi-Fi.</string>
+    <string name="intercambio_solo_nfc">Sin Wi-Fi solo puedes intercambiar acercando los teléfonos.</string>
+    <string name="intercambio_sin_wifi_ni_nfc">Necesitas Wi-Fi para intercambiar por la red, o NFC para hacerlo acercando los teléfonos.</string>
+    <string name="intercambio_tu_palabra_viajo">Tu palabra viajó al otro teléfono.</string>
+    <string name="intercambio_usar_codigo">Conectar con un código</string>
+    <string name="intercambio_codigo_pista">Código del otro teléfono</string>
+    <string name="intercambio_conectar">Conectar</string>
+    <string name="nfc_descripcion">Emparejar el intercambio de palabras de Polimatía</string>
+    <string name="intercambio_nfc_boton">Acercar los teléfonos (NFC)</string>
+    <string name="intercambio_nfc_esperando">Acerca la parte de atrás de los dos teléfonos… (el otro no necesita tocar nada)</string>
+    <string name="intercambio_nfc">También puedes acercar los teléfonos por NFC: basta con que uno de los dos toque el botón.</string>
+
+    <string name="intercambio_confirmar_titulo">¿Ves el mismo número?</string>
+    <string name="intercambio_confirmar_desc">Conectaste con «%1$s». Este número tiene que ser igual en los dos teléfonos.</string>
+    <string name="intercambio_confirmar">Sí, es el mismo</string>
+    <string name="intercambio_cancelar">Cancelar</string>
+
+    <string name="intercambio_oferta_titulo">«%1$s» te ofrece</string>
+    <string name="intercambio_conectando">Conectando con «%1$s»…</string>
+    <string name="intercambio_aceptar">Aceptar</string>
+    <string name="intercambio_rechazar">Rechazar</string>
+
+    <string name="intercambio_final_titulo">Listo</string>
+    <string name="intercambio_guardada">Guardaste «%1$s» de «%2$s».</string>
+    <string name="intercambio_guardadas_ninguna">No guardaste ninguna palabra.</string>
+    <string name="intercambio_ya_la_tenias">«%1$s» ya estaba en tu colección.</string>
+    <string name="intercambio_repetida">Ya está en tu colección</string>
+    <string name="intercambio_el_otro_acepto">«%1$s» aceptó tus palabras.</string>
+    <string name="intercambio_el_otro_rechazo">«%1$s» no aceptó tus palabras.</string>
+    <string name="intercambio_cerrar">Cerrar</string>
+    <string name="intercambio_error">No se pudo completar el intercambio: %1$s</string>
+    <string name="intercambio_origen">de %1$s</string>
+
+    <string name="coleccion_titulo">Colección</string>
+    <plurals name="coleccion_cantidad">
         <item quantity="one">%1$d palabra guardada</item>
         <item quantity="other">%1$d palabras guardadas</item>
     </plurals>
-    <string name="favoritas_quitada">Quitaste «%1$s»</string>
-    <string name="favoritas_deshacer">Deshacer</string>
-    <string name="favoritas_vacia">Todavía no tienes palabras favoritas. Toca la estrella del widget para guardar la palabra que estás viendo.</string>
+    <string name="coleccion_quitada">Quitaste «%1$s»</string>
+    <string name="coleccion_deshacer">Deshacer</string>
+    <string name="coleccion_buscar">Buscar en tu colección</string>
+    <string name="coleccion_sin_resultados">Ninguna palabra coincide con «%1$s».</string>
+    <string name="coleccion_vacia">Tu colección está vacía. Toca la estrella del widget para guardar la palabra que estás viendo.</string>
 
     <string name="main_boton_detener">Detener la app</string>
     <string name="main_boton_detener_desc">Cierra la app y su proceso en segundo plano. Tus ajustes se conservan: vuelve a funcionar al abrir la app, tocar el widget o reiniciar el teléfono.</string>

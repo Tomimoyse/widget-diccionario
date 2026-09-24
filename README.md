@@ -7,8 +7,9 @@ vez que apagas la pantalla, así que al volver a encenderla ya tienes una nueva 
 
 - **Widget** translúcido para la pantalla de inicio, con colores dinámicos del sistema. Al tocarlo
   muestra otra palabra.
-- **Favoritas**: la estrella del widget guarda la palabra que estás viendo, y la app tiene una
-  sección con todas las marcadas.
+- **Colección**: la estrella del widget guarda la palabra que estás viendo, y la app tiene una
+  sección con todas las guardadas, en orden alfabético español, agrupadas por letra inicial y con
+  buscador (sin importar tildes ni mayúsculas).
 - **Estilo del widget** configurable: color y transparencia del fondo, color y tamaño de la letra,
   con vista previa en vivo. Los cambios se aplican al tocar «Confirmar».
 - **Pantalla de bloqueo**: la app pregunta la marca del celular. En Samsung explica cómo poner el
@@ -22,6 +23,11 @@ vez que apagas la pantalla, así que al volver a encenderla ya tienes una nueva 
   mostrado todas.
 - **56 404 palabras** de [Wikcionario](https://es.wiktionary.org), sin vulgarismos ni términos
   despectivos.
+- **Intercambio de palabras**, de dos maneras: por la **red local**, si los dos están en la misma
+  Wi-Fi (aparecen listados y eliges con quién, o te conectas con un código), o **acercando los
+  teléfonos por NFC**,
+  que no necesita red alguna. Cada uno elige **una** palabra y acepta la que recibe; las recibidas
+  quedan anotadas con el alias de quien las envió.
 - **Botón para detener la app** por completo.
 
 ## Requisitos
@@ -125,9 +131,24 @@ puntos están activos.
   del diccionario.
 - **Base de datos.** SQLite de solo lectura con Room, precargada desde
   `app/src/main/assets/databases/diccionario.db`.
-- **Favoritas.** Van en una base aparte (`favoritas.db`) y cada una guarda su propia copia de la
-  palabra, la categoría y la definición. La base del diccionario se reemplaza entera al actualizarlo,
-  y los ids cambian; así las favoritas no se pierden.
+- **Intercambio por la red.** Solo dentro de la red local: la app rechaza cualquier dirección que no
+  sea privada y ata los sockets a la red Wi-Fi, porque si el teléfono tiene los datos móviles como red
+  por defecto la conexión saldría por ahí. Los teléfonos se anuncian con NSD (mDNS) y hablan por un
+  socket TCP con un protocolo de texto propio, una línea por mensaje. El anfitrión genera un código de
+  6 dígitos que ambos ven y tienen que confirmar. Todo vive mientras la pantalla está abierta: al
+  salir se cierran el anuncio y el puerto.
+- **Intercambio por NFC.** La palabra entera viaja en el toque, sin red: un teléfono hace de tarjeta
+  (`HostApduService`) y el otro de lector, porque Android Beam ya no existe. El lector entrega su
+  palabra en trozos y se lleva la de la tarjeta en la misma operación, así que un solo acercamiento
+  completa el intercambio y no hace falta confirmar ningún código. En modo lector el teléfono deja de
+  poder ser leído: por eso alcanza con que uno de los dos toque el botón, y por si los dos lo tocan, el
+  lector se apaga unos instantes cada tanto (con pausas irregulares) para dejarse leer. Mientras la pantalla está al
+  frente, la app se declara servicio NFC preferente (`CardEmulation.setPreferredService`); sin eso
+  Android pregunta con qué app atender el toque.
+- **Colección.** Va en una base aparte (`favoritas.db`) y cada palabra guarda su propia copia del
+  texto, la categoría y la definición. La base del diccionario se reemplaza entera al actualizarlo, y
+  los ids cambian; así la colección no se pierde. El orden alfabético se calcula en la app: SQLite
+  ordena por bytes y mandaría «árbol» o «ñandú» al final.
 
 ## Limitaciones conocidas
 
@@ -135,6 +156,11 @@ puntos están activos.
   (Samsung) la pantalla de bloqueo solo admite widgets de apps de Samsung. Se puede poner con
   Good Lock y LockStar (la app incluye un tutorial); en modelos que no admiten Good Lock existe
   FineLock, que no es oficial. En cualquier marca queda la notificación con la palabra.
+- **Intercambio.** Por la red necesita que las dos personas estén en la misma Wi-Fi; algunas redes
+  (de invitados, públicas o con «aislamiento de clientes») bloquean el descubrimiento e incluso la
+  conexión directa, y para esos casos están el código y el NFC. El NFC exige que los dos teléfonos lo
+  tengan, encendido y con la pantalla desbloqueada. En Android 16 el acceso a la red local todavía es libre,
+  pero el permiso `NEARBY_WIFI_DEVICES` lo gobernará en versiones futuras: la app ya lo pide.
 - **Notificación.** Mientras la palabra cambia al apagar la pantalla, Android obliga a mostrar una
   notificación. Para que no haya ninguna, desactiva ese interruptor: el widget pasará a cambiar al
   tocarlo o cada 30 minutos.
@@ -144,16 +170,18 @@ puntos están activos.
 ```
 app/src/main/java/app/widgetdiccionario/
 ├── MainActivity.kt              Pantalla principal y botón de detener
-├── FavoritasActivity.kt         Lista de palabras favoritas
+├── ColeccionActivity.kt         Colección de palabras guardadas
 ├── EstiloWidgetActivity.kt      Personalización del widget con vista previa
 ├── PantallaBloqueoActivity.kt   Pregunta la marca del celular
 ├── TutorialSamsungActivity.kt   Tutorial de Good Lock, LockStar y FineLock
 ├── OtraMarcaActivity.kt         Requisitos para otras marcas, con su estado
 ├── Ajustes.kt                   Preferencias y estado del mazo
-├── data/                        Room (diccionario y favoritas), Favoritas y Mazo
+├── IntercambioActivity.kt       Intercambio de palabras entre dos teléfonos
+├── data/                        Room (diccionario y colección), OrdenAlfabetico y Mazo
+├── intercambio/                 Protocolo, sockets, NSD y emparejamiento por NFC
 ├── pantalla/                    PantallaService, NotificacionPalabra, ArranqueReceiver
 └── widget/                      PalabraWidgetProvider, ActualizadorWidget y EstiloWidget
-app/src/test/                    Tests del mazo y de las pantallas (Robolectric)
+app/src/test/                    Tests del mazo, la colección y las pantallas (Robolectric)
 tools/
 ├── importar_wikcionario.py      Wikcionario (kaikki.org) → palabras_wikcionario.tsv
 ├── build_db.py                  TSV → diccionario.db

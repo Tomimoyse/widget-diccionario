@@ -57,6 +57,10 @@
 
     <!-- Botón sin relleno con borde fino y texto en versalitas espaciadas. -->
     <style name="Boton.Linea" parent="">
+        <item name="android:maxLines">1</item>
+        <item name="android:autoSizeTextType">uniform</item>
+        <item name="android:autoSizeMinTextSize">9sp</item>
+        <item name="android:autoSizeMaxTextSize">13sp</item>
         <item name="android:background">@drawable/boton_linea</item>
         <item name="android:fontFamily">@font/texto</item>
         <item name="android:textSize">13sp</item>
@@ -65,8 +69,8 @@
         <item name="android:textColor">@color/tinta</item>
         <item name="android:minHeight">46dp</item>
         <item name="android:minWidth">0dp</item>
-        <item name="android:paddingStart">18dp</item>
-        <item name="android:paddingEnd">18dp</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
         <item name="android:gravity">center</item>
         <item name="android:stateListAnimator">@null</item>
     </style>

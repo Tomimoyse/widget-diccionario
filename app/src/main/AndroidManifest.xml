@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Intercambio en la red local: la app no usa internet, solo sockets dentro de la Wi-Fi. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- En Android 16 el acceso a la red local todavía es libre, pero será este permiso el que lo
+         habilite en versiones futuras. Se pide solo al abrir el intercambio. -->
+    <uses-permission
+        android:name="android.permission.NEARBY_WIFI_DEVICES"
+        android:usesPermissionFlags="neverForLocation" />
+
+    <!-- Emparejar acercando los teléfonos. La app funciona igual sin NFC. -->
+    <uses-permission android:name="android.permission.NFC" />
+
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- Nada de esto es obligatorio: sin NFC o sin Wi-Fi la app funciona igual, solo se pierde el
+         emparejamiento correspondiente. Declararlo evita que un instalador lo tome como requisito. -->
+    <uses-feature android:name="android.hardware.nfc" android:required="false" />
+    <uses-feature android:name="android.hardware.nfc.hce" android:required="false" />
+    <uses-feature android:name="android.hardware.wifi" android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -23,9 +41,14 @@
         </activity>
 
         <activity
-            android:name=".FavoritasActivity"
+            android:name=".ColeccionActivity"
             android:exported="false"
-            android:label="@string/favoritas_titulo" />
+            android:label="@string/coleccion_titulo" />
+
+        <activity
+            android:name=".IntercambioActivity"
+            android:exported="false"
+            android:label="@string/intercambio_titulo" />
 
         <activity
             android:name=".EstiloWidgetActivity"
@@ -60,6 +83,19 @@
 
         <!-- ACTION_SCREEN_OFF no se puede declarar aquí: el sistema solo lo entrega a receivers
              registrados en tiempo de ejecución. Por eso existe PantallaService. -->
+        <service
+            android:name=".intercambio.ServicioNfcIntercambio"
+            android:exported="true"
+            android:permission="android.permission.BIND_NFC_SERVICE">
+            <intent-filter>
+                <action android:name="android.nfc.cardemulation.action.HOST_APDU_SERVICE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <meta-data
+                android:name="android.nfc.cardemulation.host_apdu_service"
+                android:resource="@xml/apdu_intercambio" />
+        </service>
+
         <service
             android:name=".pantalla.PantallaService"
             android:exported="false"

@@ -26,7 +26,6 @@ class ServicioNfcIntercambio : HostApduService() {
             esSelect(apdu) -> {
                 recibidos.clear()
                 entregoTodo = false
-                Log.i(TAG, "tarjeta: nos seleccionaron (palabra propia lista: ${propio != null})")
                 OK
             }
 
@@ -47,11 +46,9 @@ class ServicioNfcIntercambio : HostApduService() {
         val largo = apdu[4].toInt() and 0xFF
         if (total <= 0 || indice !in 0 until total || apdu.size < 5 + largo) return ERROR
         recibidos[indice] = apdu.copyOfRange(5, 5 + largo)
-        Log.i(TAG, "tarjeta: trozo ${indice + 1} de $total recibido")
         if (recibidos.size == total) {
             val paquete = PaqueteNfc.desdeBytes(PaqueteNfc.unirTrozos((0 until total).map { recibidos[it]!! }))
             recibidos.clear()
-            Log.i(TAG, "tarjeta: paquete completo (entendido: ${paquete != null}, hay quien escuche: ${alRecibir != null})")
             if (paquete != null) principal.post { alRecibir?.invoke(paquete) }
         }
         return OK
@@ -180,7 +177,6 @@ object IntercambioNfc {
                 runCatching {
                     iso.timeout = ESPERA_MS
                     iso.connect()
-                    Log.i(TAG, "lector: tarjeta en rango (APDU extendido: ${iso.isExtendedLengthApduSupported})")
                     val recibido = conversar(iso, propio)
                     if (recibido != null) alRecibir(recibido)
                 }.onFailure { Log.w(TAG, "lector: se cortó el toque", it) }
@@ -211,7 +207,6 @@ object IntercambioNfc {
                 return null
             }
         }
-        Log.i(TAG, "lector: entregamos nuestra palabra en ${mios.size} trozo(s)")
 
         val respuestaTotal = iso.transceive(comando(ServicioNfcIntercambio.INS_TOTAL))
         val total = datos(respuestaTotal)?.firstOrNull()?.toInt()
@@ -226,7 +221,6 @@ object IntercambioNfc {
             }
         }
         val paquete = PaqueteNfc.desdeBytes(PaqueteNfc.unirTrozos(suyos))
-        Log.i(TAG, "lector: recibimos $total trozo(s) (entendido: ${paquete != null})")
         return paquete
     }
 

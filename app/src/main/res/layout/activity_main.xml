@@ -116,73 +116,31 @@
             android:gravity="center"
             android:orientation="horizontal">
 
-            <LinearLayout
+            <ImageView
                 android:id="@+id/acceso_compartir"
                 style="@style/Acceso"
-                tools:ignore="UseCompoundDrawables"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:contentDescription="@string/main_acceso_compartir"
+                android:src="@drawable/ic_compartir" />
 
-                <ImageView
-                    style="@style/Acceso.Icono"
-                    android:layout_width="58dp"
-                    android:layout_height="58dp"
-                    android:contentDescription="@string/main_acceso_compartir"
-                    android:src="@drawable/ic_compartir" />
-
-                <TextView
-                    style="@style/Texto.Etiqueta"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/main_acceso_compartir" />
-            </LinearLayout>
-
-            <LinearLayout
+            <ImageView
                 android:id="@+id/acceso_personalizar"
                 style="@style/Acceso"
-                tools:ignore="UseCompoundDrawables"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp">
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginStart="20dp"
+                android:contentDescription="@string/main_acceso_personalizar"
+                android:src="@drawable/ic_personalizar" />
 
-                <ImageView
-                    style="@style/Acceso.Icono"
-                    android:layout_width="58dp"
-                    android:layout_height="58dp"
-                    android:contentDescription="@string/main_acceso_personalizar"
-                    android:src="@drawable/ic_personalizar" />
-
-                <TextView
-                    style="@style/Texto.Etiqueta"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/main_acceso_personalizar" />
-            </LinearLayout>
-
-            <LinearLayout
+            <ImageView
                 android:id="@+id/acceso_funcionamiento"
                 style="@style/Acceso"
-                tools:ignore="UseCompoundDrawables"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp">
-
-                <ImageView
-                    style="@style/Acceso.Icono"
-                    android:layout_width="58dp"
-                    android:layout_height="58dp"
-                    android:contentDescription="@string/main_acceso_funcionamiento"
-                    android:src="@drawable/ic_funcionamiento" />
-
-                <TextView
-                    style="@style/Texto.Etiqueta"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/main_acceso_funcionamiento" />
-            </LinearLayout>
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginStart="20dp"
+                android:contentDescription="@string/main_acceso_funcionamiento"
+                android:src="@drawable/ic_funcionamiento" />
         </LinearLayout>
 
         <!-- Pie -->

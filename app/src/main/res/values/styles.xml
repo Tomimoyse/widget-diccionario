@@ -81,6 +81,22 @@
         <item name="android:textColor">@color/papel</item>
     </style>
 
+    <!-- Acceso con icono: botón cuadrado de borde fino con su etiqueta debajo. -->
+    <style name="Acceso" parent="">
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:padding">6dp</item>
+    </style>
+
+    <style name="Acceso.Icono" parent="">
+        <item name="android:background">@drawable/boton_linea</item>
+        <item name="android:padding">15dp</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
+
     <!-- Fila de menú: texto a la izquierda, flecha a la derecha, línea debajo. -->
     <style name="Fila.Menu" parent="">
         <item name="android:background">?android:attr/selectableItemBackground</item>

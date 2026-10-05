@@ -8,7 +8,9 @@
 
     <string name="main_palabra_del_momento">Palabra del momento</string>
     <string name="main_pie">Diccionario del español</string>
-    <string name="main_seccion_compartir">Compartir</string>
+    <string name="main_acceso_compartir">Compartir</string>
+    <string name="main_acceso_personalizar">Personalizar</string>
+    <string name="main_acceso_funcionamiento">Funcionamiento</string>
     <string name="main_seccion_personalizar">Personalizar</string>
     <string name="main_seccion_funcionamiento">Funcionamiento</string>
     <string name="main_fila_estilo">Estilo del widget</string>
@@ -80,8 +82,6 @@
     <string name="coleccion_guardar_palabra">Guardar en la colección</string>
     <string name="coleccion_quitar_palabra">Quitar de la colección</string>
     <!-- Intercambio -->
-    <string name="main_fila_intercambio">Intercambiar palabras</string>
-    <string name="main_fila_intercambio_desc">Con otro celular en la misma red Wi-Fi</string>
     <string name="intercambio_titulo">Intercambiar</string>
 
     <string name="intercambio_alias_titulo">¿Cómo te llamamos?</string>

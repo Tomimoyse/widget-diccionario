@@ -225,5 +225,6 @@ resultado (requiere `cairosvg`).
   caracteres latinos), ambas bajo la SIL Open Font License. Las licencias van en
   `app/src/main/assets/licencias/`.
 - **Icono:** glifo de Noto Serif.
-- **Estrellas:** iconos de Material Symbols, bajo la licencia Apache 2.0.
+- **Iconos:** Material Symbols (Apache 2.0). El de compartir combina la mano de Material Symbols
+  con el «&» de Noto Serif.
 - **Código:** todavía no tiene una licencia definida.

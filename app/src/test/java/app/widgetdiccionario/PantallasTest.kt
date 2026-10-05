@@ -56,8 +56,44 @@ class PantallasTest {
             TutorialSamsungActivity::class.java,
             OtraMarcaActivity::class.java,
             IntercambioActivity::class.java,
+            PersonalizarActivity::class.java,
+            FuncionamientoActivity::class.java,
         ).forEach { pantalla ->
             ActivityScenario.launch(pantalla).use { it.onActivity { shadowOf(Looper.getMainLooper()).idle() } }
+        }
+    }
+
+    @Test
+    fun losTresAccesosDeInicioLlevanASuPantalla() {
+        ActivityScenario.launch(MainActivity::class.java).use { escenario ->
+            escenario.onActivity { actividad ->
+                mapOf(
+                    R.id.acceso_compartir to IntercambioActivity::class.java,
+                    R.id.acceso_personalizar to PersonalizarActivity::class.java,
+                    R.id.acceso_funcionamiento to FuncionamientoActivity::class.java,
+                ).forEach { (boton, pantalla) ->
+                    actividad.findViewById<View>(boton).performClick()
+                    assertEquals(pantalla.name, shadowOf(actividad).nextStartedActivity.component?.className)
+                }
+            }
+        }
+    }
+
+    @Test
+    fun personalizarLlevaAlEstiloYALaPantallaDeBloqueo() {
+        ActivityScenario.launch(PersonalizarActivity::class.java).use { escenario ->
+            escenario.onActivity { actividad ->
+                actividad.findViewById<View>(R.id.fila_estilo).performClick()
+                assertEquals(
+                    EstiloWidgetActivity::class.java.name,
+                    shadowOf(actividad).nextStartedActivity.component?.className,
+                )
+                actividad.findViewById<View>(R.id.fila_tutorial).performClick()
+                assertEquals(
+                    PantallaBloqueoActivity::class.java.name,
+                    shadowOf(actividad).nextStartedActivity.component?.className,
+                )
+            }
         }
     }
 

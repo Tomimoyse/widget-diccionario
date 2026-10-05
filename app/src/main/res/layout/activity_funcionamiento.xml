@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="28dp"
+        android:paddingVertical="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            tools:ignore="UseCompoundDrawables">
+
+            <TextView
+                style="@style/Texto.Etiqueta"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/app_name"
+                android:textColor="@color/tinta" />
+
+            <ImageView
+                android:id="@+id/boton_volver"
+                style="@style/Boton.Volver"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="-8dp"
+                android:contentDescription="@string/boton_volver"
+                android:src="@drawable/ic_volver" />
+
+        </LinearLayout>
+
+        <TextView
+            style="@style/Texto.Titulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:text="@string/main_seccion_funcionamiento" />
+
+        <View
+            style="@style/Linea"
+            android:layout_marginTop="16dp" />
+
+
+        <Switch
+            android:id="@+id/switch_pantalla"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/texto"
+            android:text="@string/main_switch"
+            android:textColor="@color/tinta"
+            android:textSize="17sp" />
+
+        <TextView
+            style="@style/Texto.Secundario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/main_switch_desc" />
+
+        <Switch
+            android:id="@+id/switch_notificacion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:fontFamily="@font/texto"
+            android:text="@string/main_switch_notificacion"
+            android:textColor="@color/tinta"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/desc_notificacion"
+            style="@style/Texto.Secundario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/main_switch_notificacion_desc" />
+
+        <Button
+            android:id="@+id/boton_detener"
+            style="@style/Boton.Linea"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:text="@string/main_boton_detener" />
+
+        <TextView
+            style="@style/Texto.Secundario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/main_boton_detener_desc" />
+
+        <!-- Fuentes del diccionario: la licencia obliga a citarlas dentro de la app. -->
+        <View
+            style="@style/Linea"
+            android:layout_marginTop="36dp" />
+
+        <TextView
+            style="@style/Texto.Etiqueta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/funcionamiento_fuentes" />
+
+        <TextView
+            android:id="@+id/atribucion"
+            style="@style/Texto.Secundario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:autoLink="web"
+            android:text="@string/main_atribucion"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+</ScrollView>

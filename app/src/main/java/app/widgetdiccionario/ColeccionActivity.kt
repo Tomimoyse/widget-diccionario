@@ -46,6 +46,7 @@ class ColeccionActivity : Activity() {
         barraDeshacer = findViewById(R.id.barra_deshacer)
         textoDeshacer = findViewById(R.id.texto_deshacer)
         findViewById<ListView>(R.id.lista_coleccion).adapter = adaptador
+        findViewById<Button>(R.id.boton_orden).setOnClickListener { cambiarOrden() }
         findViewById<EditText>(R.id.buscador).addTextChangedListener { texto ->
             adaptador.buscar(texto?.toString().orEmpty())
             actualizarEncabezado()
@@ -54,9 +55,33 @@ class ColeccionActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
+        adaptador.ordenarPorRecientes(Ajustes.coleccionPorRecientes(this))
+        mostrarOrden()
         scope.launch {
             adaptador.cargar(Favoritas.todas(this@ColeccionActivity))
             actualizarEncabezado()
+        }
+    }
+
+    private fun cambiarOrden() {
+        val porRecientes = !Ajustes.coleccionPorRecientes(this)
+        Ajustes.setColeccionPorRecientes(this, porRecientes)
+        adaptador.ordenarPorRecientes(porRecientes)
+        mostrarOrden()
+        findViewById<ListView>(R.id.lista_coleccion).setSelection(0)
+    }
+
+    /** El botón muestra el orden en uso. */
+    private fun mostrarOrden() {
+        findViewById<Button>(R.id.boton_orden).apply {
+            setText(
+                if (Ajustes.coleccionPorRecientes(this@ColeccionActivity)) {
+                    R.string.coleccion_orden_recientes
+                } else {
+                    R.string.coleccion_orden_az
+                },
+            )
+            contentDescription = getString(R.string.coleccion_orden_descripcion)
         }
     }
 
@@ -116,6 +141,7 @@ class ColeccionActivity : Activity() {
         private val palabras = mutableListOf<Favorita>()
         private var filas = emptyList<Fila>()
         private var consulta = ""
+        private var porRecientes = false
 
         fun cargar(nuevas: List<Favorita>) {
             palabras.clear()
@@ -125,6 +151,12 @@ class ColeccionActivity : Activity() {
 
         fun buscar(texto: String) {
             consulta = texto
+            rehacerFilas()
+        }
+
+        fun ordenarPorRecientes(valor: Boolean) {
+            if (porRecientes == valor) return
+            porRecientes = valor
             rehacerFilas()
         }
 
@@ -146,10 +178,19 @@ class ColeccionActivity : Activity() {
         fun cantidadDePalabras() = palabras.size
 
         private fun rehacerFilas() {
-            palabras.sortWith(OrdenAlfabetico.comparadorDePalabras)
+            palabras.sortWith(
+                if (porRecientes) compareByDescending { it.agregadaEn } else OrdenAlfabetico.comparadorDePalabras,
+            )
+            val visibles = palabras.filter { OrdenAlfabetico.coincide(it, consulta) }
+            filas = if (porRecientes) porOrdenDeLlegada(visibles) else porLetras(visibles)
+            notifyDataSetChanged()
+        }
+
+        /** Alfabético: cada grupo abre con su letra, como en un diccionario. */
+        private fun porLetras(visibles: List<Favorita>): List<Fila> {
             val nuevas = mutableListOf<Fila>()
             var letraActual: String? = null
-            palabras.filter { OrdenAlfabetico.coincide(it, consulta) }.forEach { favorita ->
+            visibles.forEach { favorita ->
                 val letra = OrdenAlfabetico.letraInicial(favorita.palabra)
                 if (letra != letraActual) {
                     nuevas.add(Fila.Letra(letra))
@@ -157,9 +198,16 @@ class ColeccionActivity : Activity() {
                 }
                 nuevas.add(Fila.Palabra(favorita))
             }
-            filas = nuevas
-            notifyDataSetChanged()
+            return nuevas
         }
+
+        /** Por lo último guardado: un solo encabezado, porque no hay letras que separar. */
+        private fun porOrdenDeLlegada(visibles: List<Favorita>): List<Fila> =
+            if (visibles.isEmpty()) {
+                emptyList()
+            } else {
+                listOf(Fila.Letra(getString(R.string.coleccion_grupo_recientes))) + visibles.map(Fila::Palabra)
+            }
 
         override fun getCount() = filas.size
         override fun getItem(position: Int) = filas[position]

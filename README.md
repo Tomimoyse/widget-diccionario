@@ -5,11 +5,16 @@ vez que apagas la pantalla, así que al volver a encenderla ya tienes una nueva 
 
 ## Funciones
 
+- **Pantalla de inicio** con la palabra del momento, los botones «Otra palabra» y «Colección» y tres
+  iconos, sin más texto: una mano entregando un «&» (compartir), una paleta de pintor (personalizar)
+  y un engranaje (funcionamiento). Cada apartado tiene una flecha «←» arriba a la derecha para
+  volver al inicio, y las fuentes del diccionario se citan al final de Funcionamiento.
 - **Widget** translúcido para la pantalla de inicio, con colores dinámicos del sistema. Al tocarlo
   muestra otra palabra.
 - **Colección**: la estrella del widget guarda la palabra que estás viendo, y la app tiene una
-  sección con todas las guardadas, en orden alfabético español, agrupadas por letra inicial y con
-  buscador (sin importar tildes ni mayúsculas).
+  sección con todas las guardadas, con buscador (encuentra trozos en cualquier parte de la palabra o
+  de la definición, sin importar tildes ni mayúsculas) y un botón para alternar entre el orden
+  alfabético español, agrupado por letra inicial, y las últimas guardadas.
 - **Estilo del widget** configurable: color y transparencia del fondo, color y tamaño de la letra,
   con vista previa en vivo. Los cambios se aplican al tocar «Confirmar».
 - **Pantalla de bloqueo**: la app pregunta la marca del celular. En Samsung explica cómo poner el
@@ -218,11 +223,12 @@ resultado (requiere `cairosvg`).
 - **Definiciones:** [Wikcionario](https://es.wiktionary.org), bajo
   [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), extraídas con
   [Wiktextract](https://kaikki.org). `tools/palabras_wikcionario.tsv` y `diccionario.db` heredan esa
-  licencia.
+  licencia. La atribución se muestra dentro de la app, en Funcionamiento → Fuentes.
 - **Tipografías:** [Playfair Display](https://fonts.google.com/specimen/Playfair+Display) (sin
   modificar) y [Noto Serif](https://fonts.google.com/noto/specimen/Noto+Serif) (reducida a
   caracteres latinos), ambas bajo la SIL Open Font License. Las licencias van en
   `app/src/main/assets/licencias/`.
 - **Icono:** glifo de Noto Serif.
-- **Estrellas:** iconos de Material Symbols, bajo la licencia Apache 2.0.
+- **Iconos:** Material Symbols (Apache 2.0). El de compartir combina la mano de Material Symbols
+  con el «&» de Noto Serif.
 - **Código:** todavía no tiene una licencia definida.

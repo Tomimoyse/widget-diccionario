@@ -46,6 +46,16 @@
             android:label="@string/coleccion_titulo" />
 
         <activity
+            android:name=".PersonalizarActivity"
+            android:exported="false"
+            android:label="@string/main_seccion_personalizar" />
+
+        <activity
+            android:name=".FuncionamientoActivity"
+            android:exported="false"
+            android:label="@string/main_seccion_funcionamiento" />
+
+        <activity
             android:name=".IntercambioActivity"
             android:exported="false"
             android:label="@string/intercambio_titulo" />

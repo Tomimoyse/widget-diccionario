@@ -67,6 +67,7 @@ class IntercambioActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_intercambio)
+        findViewById<View>(R.id.boton_volver).setOnClickListener { finish() }
         findViewById<ListView>(R.id.lista_ofrecer).apply {
             adapter = adaptadorColeccion
             setOnItemClickListener { _, _, posicion, _ -> adaptadorColeccion.elegir(posicion) }
@@ -498,6 +499,11 @@ class IntercambioActivity : Activity() {
             val palabra = palabras[position]
             vista.findViewById<TextView>(R.id.item_palabra).text = palabra.palabra
             vista.findViewById<TextView>(R.id.item_definicion).text = palabra.definicion
+            // Deja ver de quién vino: una palabra recibida se puede volver a pasar.
+            vista.findViewById<TextView>(R.id.item_origen).apply {
+                text = palabra.origen?.let { getString(R.string.intercambio_origen, it) }.orEmpty()
+                visibility = if (palabra.origen.isNullOrBlank()) View.GONE else View.VISIBLE
+            }
             vista.findViewById<RadioButton>(R.id.item_elegida).isChecked = palabra.palabra == elegida
             return vista
         }
@@ -548,6 +554,7 @@ class IntercambioActivity : Activity() {
             vista.findViewById<TextView>(R.id.item_palabra).text = palabra.palabra
             vista.findViewById<TextView>(R.id.item_definicion).text = palabra.definicion
             vista.findViewById<RadioButton>(R.id.item_elegida).visibility = View.GONE
+            vista.findViewById<TextView>(R.id.item_origen).visibility = View.GONE
             vista.findViewById<TextView>(R.id.item_repetida).visibility =
                 if (palabra.palabra in repetidas) View.VISIBLE else View.GONE
             return vista

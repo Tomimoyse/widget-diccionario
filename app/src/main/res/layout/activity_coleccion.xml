@@ -38,11 +38,20 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp" />
 
-            <EditText
-                android:id="@+id/buscador"
+            <LinearLayout
+                android:id="@+id/fila_busqueda"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:baselineAligned="false"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/buscador"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:autofillHints=""
                 android:fontFamily="@font/texto"
                 android:hint="@string/coleccion_buscar"
@@ -51,6 +60,16 @@
                 android:maxLines="1"
                 android:textColor="@color/tinta"
                 android:textSize="16sp" />
+
+                <Button
+                    android:id="@+id/boton_orden"
+                    style="@style/Boton.Linea"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:minHeight="40dp"
+                    android:text="@string/coleccion_orden_az" />
+            </LinearLayout>
 
             <View
                 style="@style/Linea"

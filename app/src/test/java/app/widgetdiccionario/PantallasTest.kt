@@ -56,8 +56,44 @@ class PantallasTest {
             TutorialSamsungActivity::class.java,
             OtraMarcaActivity::class.java,
             IntercambioActivity::class.java,
+            PersonalizarActivity::class.java,
+            FuncionamientoActivity::class.java,
         ).forEach { pantalla ->
             ActivityScenario.launch(pantalla).use { it.onActivity { shadowOf(Looper.getMainLooper()).idle() } }
+        }
+    }
+
+    @Test
+    fun losTresAccesosDeInicioLlevanASuPantalla() {
+        ActivityScenario.launch(MainActivity::class.java).use { escenario ->
+            escenario.onActivity { actividad ->
+                mapOf(
+                    R.id.acceso_compartir to IntercambioActivity::class.java,
+                    R.id.acceso_personalizar to PersonalizarActivity::class.java,
+                    R.id.acceso_funcionamiento to FuncionamientoActivity::class.java,
+                ).forEach { (boton, pantalla) ->
+                    actividad.findViewById<View>(boton).performClick()
+                    assertEquals(pantalla.name, shadowOf(actividad).nextStartedActivity.component?.className)
+                }
+            }
+        }
+    }
+
+    @Test
+    fun personalizarLlevaAlEstiloYALaPantallaDeBloqueo() {
+        ActivityScenario.launch(PersonalizarActivity::class.java).use { escenario ->
+            escenario.onActivity { actividad ->
+                actividad.findViewById<View>(R.id.fila_estilo).performClick()
+                assertEquals(
+                    EstiloWidgetActivity::class.java.name,
+                    shadowOf(actividad).nextStartedActivity.component?.className,
+                )
+                actividad.findViewById<View>(R.id.fila_tutorial).performClick()
+                assertEquals(
+                    PantallaBloqueoActivity::class.java.name,
+                    shadowOf(actividad).nextStartedActivity.component?.className,
+                )
+            }
         }
     }
 
@@ -106,7 +142,7 @@ class PantallasTest {
             val dao = FavoritasDatabase.get(contexto).favoritaDao()
             dao.todas().forEach { dao.quitar(it.palabra) }
             dao.guardar(Favorita("anemoia", "f.", "Nostalgia de un tiempo no vivido.", 1))
-            dao.guardar(Favorita("baldaquino", "m.", "Dosel sobre columnas.", 1))
+            dao.guardar(Favorita("baldaquino", "m.", "Dosel sobre columnas.", 1, origen = "Huenu"))
         }
 
         ActivityScenario.launch(IntercambioActivity::class.java).use { escenario ->
@@ -132,6 +168,13 @@ class PantallasTest {
                 lista.performItemClick(lista.adapter.getView(1, null, lista), 1, 0)
                 assertEquals("baldaquino", elegida(actividad))
 
+                // Se ve de quién vino una palabra recibida.
+                val recibida = lista.adapter.getView(1, null, lista)
+                assertEquals(View.VISIBLE, recibida.findViewById<TextView>(R.id.item_origen).visibility)
+                assertTrue(recibida.findViewById<TextView>(R.id.item_origen).text.toString().contains("Huenu"))
+                val propia = lista.adapter.getView(0, null, lista)
+                assertEquals(View.GONE, propia.findViewById<TextView>(R.id.item_origen).visibility)
+
                 // El buscador filtra la lista.
                 actividad.findViewById<EditText>(R.id.buscador_ofrecer).setText("anem")
                 esperar { lista.adapter.count == 1 }
@@ -146,6 +189,34 @@ class PantallasTest {
                 val texto = actividad.findViewById<TextView>(R.id.requisitos).text.toString()
                 assertTrue(texto, texto.contains("Batería sin restricciones"))
                 assertTrue(texto, texto.contains("Mostrar la palabra en la notificación"))
+            }
+        }
+    }
+
+    @Test
+    fun laFlechaDeLaCabeceraVuelveAlInicio() {
+        for (pantalla in listOf(
+            PersonalizarActivity::class.java,
+            FuncionamientoActivity::class.java,
+            IntercambioActivity::class.java,
+        )) {
+            ActivityScenario.launch(pantalla).use { escenario ->
+                escenario.onActivity { actividad ->
+                    val volver = actividad.findViewById<View>(R.id.boton_volver)
+                    assertTrue(pantalla.simpleName, volver.performClick())
+                    assertTrue(pantalla.simpleName, actividad.isFinishing)
+                }
+            }
+        }
+    }
+
+    @Test
+    fun lasFuentesDelDiccionarioEstanEnFuncionamiento() {
+        ActivityScenario.launch(FuncionamientoActivity::class.java).use { escenario ->
+            escenario.onActivity { actividad ->
+                val texto = actividad.findViewById<TextView>(R.id.atribucion).text.toString()
+                assertTrue(texto, texto.contains("Wikcionario"))
+                assertTrue(texto, texto.contains("CC BY-SA 4.0"))
             }
         }
     }

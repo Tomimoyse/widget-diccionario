@@ -35,8 +35,8 @@ class ColeccionActivityTest {
         guardar("baldaquino", 1)
     }
 
-    private suspend fun guardar(palabra: String, agregadaEn: Long) =
-        dao.guardar(Favorita(palabra, "f.", "Definición de $palabra.", agregadaEn))
+    private suspend fun guardar(palabra: String, agregadaEn: Long, origen: String? = null) =
+        dao.guardar(Favorita(palabra, "f.", "Definición de $palabra.", agregadaEn, origen))
 
     @Test
     fun quitarUnaPalabra_noReapareceAlVolverAAbrirLaColeccion() {
@@ -103,6 +103,55 @@ class ColeccionActivityTest {
                 )
                 // Cada grupo abre con su letra; lo que no empieza por letra va a "#".
                 assertEquals(listOf("#", "A", "B", "Ñ"), letras(lista))
+            }
+        }
+    }
+
+    @Test
+    fun elBuscadorEncuentraTrozosEnMedioYAlFinalDeLaPalabra() {
+        runBlocking {
+            dao.todas().forEach { dao.quitar(it.palabra) }
+            listOf("islamofobia", "fobia", "claustrofobico", "mesa").forEach { guardar(it, 1) }
+        }
+        ActivityScenario.launch(ColeccionActivity::class.java).use { escenario ->
+            escenario.onActivity { actividad ->
+                val lista = actividad.findViewById<ListView>(R.id.lista_coleccion)
+                val buscador = actividad.findViewById<EditText>(R.id.buscador)
+                esperarHasta { palabras(lista).size == 4 }
+
+                buscador.setText("fobia")
+                esperarHasta { palabras(lista) == listOf("fobia", "islamofobia") }
+
+                // También en medio de la palabra.
+                buscador.setText("trofob")
+                esperarHasta { palabras(lista) == listOf("claustrofobico") }
+            }
+        }
+    }
+
+    @Test
+    fun elBotonDeOrdenAlternaEntreAlfabeticoYRecientes() {
+        runBlocking {
+            dao.todas().forEach { dao.quitar(it.palabra) }
+            guardar("anemoia", agregadaEn = 1)
+            guardar("zarcillo", agregadaEn = 2)
+            guardar("mesa", agregadaEn = 3)
+        }
+        Ajustes.setColeccionPorRecientes(contexto, false)
+        ActivityScenario.launch(ColeccionActivity::class.java).use { escenario ->
+            escenario.onActivity { actividad ->
+                val lista = actividad.findViewById<ListView>(R.id.lista_coleccion)
+                esperarHasta { palabras(lista) == listOf("anemoia", "mesa", "zarcillo") }
+                assertEquals(listOf("A", "M", "Z"), letras(lista))
+
+                actividad.findViewById<View>(R.id.boton_orden).performClick()
+                esperarHasta { palabras(lista) == listOf("mesa", "zarcillo", "anemoia") }
+                assertEquals("un solo encabezado", 1, letras(lista).size)
+                assertEquals(true, Ajustes.coleccionPorRecientes(contexto))
+
+                actividad.findViewById<View>(R.id.boton_orden).performClick()
+                esperarHasta { palabras(lista) == listOf("anemoia", "mesa", "zarcillo") }
+                assertEquals(false, Ajustes.coleccionPorRecientes(contexto))
             }
         }
     }

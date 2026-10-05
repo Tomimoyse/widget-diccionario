@@ -8,7 +8,10 @@
 
     <string name="main_palabra_del_momento">Palabra del momento</string>
     <string name="main_pie">Diccionario del español</string>
-    <string name="main_seccion_compartir">Compartir</string>
+    <string name="boton_volver">Volver al inicio</string>
+    <string name="main_acceso_compartir">Compartir</string>
+    <string name="main_acceso_personalizar">Personalizar</string>
+    <string name="main_acceso_funcionamiento">Funcionamiento</string>
     <string name="main_seccion_personalizar">Personalizar</string>
     <string name="main_seccion_funcionamiento">Funcionamiento</string>
     <string name="main_fila_estilo">Estilo del widget</string>
@@ -80,8 +83,6 @@
     <string name="coleccion_guardar_palabra">Guardar en la colección</string>
     <string name="coleccion_quitar_palabra">Quitar de la colección</string>
     <!-- Intercambio -->
-    <string name="main_fila_intercambio">Intercambiar palabras</string>
-    <string name="main_fila_intercambio_desc">Con otro celular en la misma red Wi-Fi</string>
     <string name="intercambio_titulo">Intercambiar</string>
 
     <string name="intercambio_alias_titulo">¿Cómo te llamamos?</string>
@@ -142,6 +143,10 @@
     <string name="coleccion_quitada">Quitaste «%1$s»</string>
     <string name="coleccion_deshacer">Deshacer</string>
     <string name="coleccion_buscar">Buscar en tu colección</string>
+    <string name="coleccion_orden_az">A–Z</string>
+    <string name="coleccion_orden_recientes">Recientes</string>
+    <string name="coleccion_orden_descripcion">Cambiar el orden de la lista</string>
+    <string name="coleccion_grupo_recientes">Últimas guardadas</string>
     <string name="coleccion_sin_resultados">Ninguna palabra coincide con «%1$s».</string>
     <string name="coleccion_vacia">Tu colección está vacía. Toca la estrella del widget para guardar la palabra que estás viendo.</string>
 
@@ -164,6 +169,7 @@
     <string name="ayuda_reactivar">%1$s &lt;b&gt;Si el widget deja de cambiar&lt;/b&gt;: tócalo una vez o abre esta app para reactivar el servicio. Tras reiniciar el teléfono se reactiva solo.</string>
     <string name="ayuda_abrir_ajustes">Ajustes de la app</string>
     <string name="main_switch">Cambiar la palabra al apagar la pantalla</string>
+    <string name="funcionamiento_fuentes">Fuentes</string>
     <string name="main_atribucion">Definiciones de Wikcionario (https://es.wiktionary.org), disponibles bajo la licencia CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/). Extraídas con Wiktextract (https://kaikki.org).</string>
     <string name="main_boton_nueva">Otra palabra</string>
 

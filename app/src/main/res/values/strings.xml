@@ -169,6 +169,7 @@
     <string name="ayuda_reactivar">%1$s &lt;b&gt;Si el widget deja de cambiar&lt;/b&gt;: tócalo una vez o abre esta app para reactivar el servicio. Tras reiniciar el teléfono se reactiva solo.</string>
     <string name="ayuda_abrir_ajustes">Ajustes de la app</string>
     <string name="main_switch">Cambiar la palabra al apagar la pantalla</string>
+    <string name="funcionamiento_fuentes">Fuentes</string>
     <string name="main_atribucion">Definiciones de Wikcionario (https://es.wiktionary.org), disponibles bajo la licencia CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/). Extraídas con Wiktextract (https://kaikki.org).</string>
     <string name="main_boton_nueva">Otra palabra</string>
 

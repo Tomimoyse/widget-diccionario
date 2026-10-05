@@ -143,18 +143,5 @@
                 android:src="@drawable/ic_funcionamiento" />
         </LinearLayout>
 
-        <!-- Pie -->
-        <View
-            style="@style/Linea"
-            android:layout_marginTop="44dp" />
-
-        <TextView
-            style="@style/Texto.Secundario"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:autoLink="web"
-            android:text="@string/main_atribucion"
-            android:textSize="12sp" />
     </LinearLayout>
 </ScrollView>

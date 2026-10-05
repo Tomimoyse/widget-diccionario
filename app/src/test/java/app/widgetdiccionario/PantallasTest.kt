@@ -209,4 +209,15 @@ class PantallasTest {
             }
         }
     }
+
+    @Test
+    fun lasFuentesDelDiccionarioEstanEnFuncionamiento() {
+        ActivityScenario.launch(FuncionamientoActivity::class.java).use { escenario ->
+            escenario.onActivity { actividad ->
+                val texto = actividad.findViewById<TextView>(R.id.atribucion).text.toString()
+                assertTrue(texto, texto.contains("Wikcionario"))
+                assertTrue(texto, texto.contains("CC BY-SA 4.0"))
+            }
+        }
+    }
 }

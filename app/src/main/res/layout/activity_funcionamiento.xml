@@ -100,5 +100,27 @@
             android:layout_marginTop="6dp"
             android:text="@string/main_boton_detener_desc" />
 
+        <!-- Fuentes del diccionario: la licencia obliga a citarlas dentro de la app. -->
+        <View
+            style="@style/Linea"
+            android:layout_marginTop="36dp" />
+
+        <TextView
+            style="@style/Texto.Etiqueta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/funcionamiento_fuentes" />
+
+        <TextView
+            android:id="@+id/atribucion"
+            style="@style/Texto.Secundario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:autoLink="web"
+            android:text="@string/main_atribucion"
+            android:textSize="12sp" />
+
     </LinearLayout>
 </ScrollView>

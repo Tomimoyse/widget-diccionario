@@ -142,6 +142,10 @@
     <string name="coleccion_quitada">Quitaste «%1$s»</string>
     <string name="coleccion_deshacer">Deshacer</string>
     <string name="coleccion_buscar">Buscar en tu colección</string>
+    <string name="coleccion_orden_az">A–Z</string>
+    <string name="coleccion_orden_recientes">Recientes</string>
+    <string name="coleccion_orden_descripcion">Cambiar el orden de la lista</string>
+    <string name="coleccion_grupo_recientes">Últimas guardadas</string>
     <string name="coleccion_sin_resultados">Ninguna palabra coincide con «%1$s».</string>
     <string name="coleccion_vacia">Tu colección está vacía. Toca la estrella del widget para guardar la palabra que estás viendo.</string>
 

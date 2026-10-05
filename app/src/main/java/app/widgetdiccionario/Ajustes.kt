@@ -13,6 +13,7 @@ object Ajustes {
     private const val CLAVE_MAZO_TOTAL = "mazo_total"
     private const val CLAVE_MAZO_POSICION = "mazo_posicion"
     private const val CLAVE_ALIAS = "alias"
+    private const val CLAVE_ORDEN_COLECCION = "orden_coleccion_recientes"
     private const val CLAVE_ESTILO_FONDO = "estilo_color_fondo"
     private const val CLAVE_ESTILO_TRANSPARENCIA = "estilo_transparencia"
     private const val CLAVE_ESTILO_TEXTO = "estilo_color_texto"
@@ -49,6 +50,13 @@ object Ajustes {
         putInt(CLAVE_MAZO_TOTAL, estado.total)
         putInt(CLAVE_MAZO_POSICION, estado.posicion)
     }
+
+    /** Si es true la colección se ordena por lo último guardado, en vez de alfabéticamente. */
+    fun coleccionPorRecientes(context: Context): Boolean =
+        prefs(context).getBoolean(CLAVE_ORDEN_COLECCION, false)
+
+    fun setColeccionPorRecientes(context: Context, valor: Boolean) =
+        prefs(context).edit { putBoolean(CLAVE_ORDEN_COLECCION, valor) }
 
     /** Nombre con el que te ven los demás al intercambiar; vacío hasta que lo eliges. */
     fun alias(context: Context): String = prefs(context).getString(CLAVE_ALIAS, "").orEmpty()

@@ -8,8 +8,9 @@ vez que apagas la pantalla, así que al volver a encenderla ya tienes una nueva 
 - **Widget** translúcido para la pantalla de inicio, con colores dinámicos del sistema. Al tocarlo
   muestra otra palabra.
 - **Colección**: la estrella del widget guarda la palabra que estás viendo, y la app tiene una
-  sección con todas las guardadas, en orden alfabético español, agrupadas por letra inicial y con
-  buscador (sin importar tildes ni mayúsculas).
+  sección con todas las guardadas, con buscador (encuentra trozos en cualquier parte de la palabra o
+  de la definición, sin importar tildes ni mayúsculas) y un botón para alternar entre el orden
+  alfabético español, agrupado por letra inicial, y las últimas guardadas.
 - **Estilo del widget** configurable: color y transparencia del fondo, color y tamaño de la letra,
   con vista previa en vivo. Los cambios se aplican al tocar «Confirmar».
 - **Pantalla de bloqueo**: la app pregunta la marca del celular. En Samsung explica cómo poner el

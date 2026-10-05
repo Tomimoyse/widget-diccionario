@@ -106,7 +106,7 @@ class PantallasTest {
             val dao = FavoritasDatabase.get(contexto).favoritaDao()
             dao.todas().forEach { dao.quitar(it.palabra) }
             dao.guardar(Favorita("anemoia", "f.", "Nostalgia de un tiempo no vivido.", 1))
-            dao.guardar(Favorita("baldaquino", "m.", "Dosel sobre columnas.", 1))
+            dao.guardar(Favorita("baldaquino", "m.", "Dosel sobre columnas.", 1, origen = "Huenu"))
         }
 
         ActivityScenario.launch(IntercambioActivity::class.java).use { escenario ->
@@ -131,6 +131,13 @@ class PantallasTest {
                 // Solo se ofrece una palabra: elegir otra reemplaza a la anterior.
                 lista.performItemClick(lista.adapter.getView(1, null, lista), 1, 0)
                 assertEquals("baldaquino", elegida(actividad))
+
+                // Se ve de quién vino una palabra recibida.
+                val recibida = lista.adapter.getView(1, null, lista)
+                assertEquals(View.VISIBLE, recibida.findViewById<TextView>(R.id.item_origen).visibility)
+                assertTrue(recibida.findViewById<TextView>(R.id.item_origen).text.toString().contains("Huenu"))
+                val propia = lista.adapter.getView(0, null, lista)
+                assertEquals(View.GONE, propia.findViewById<TextView>(R.id.item_origen).visibility)
 
                 // El buscador filtra la lista.
                 actividad.findViewById<EditText>(R.id.buscador_ofrecer).setText("anem")

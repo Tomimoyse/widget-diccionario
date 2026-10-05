@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Process
+import android.view.View
 import android.widget.Button
 import android.widget.Switch
 import android.widget.TextView
@@ -27,6 +28,7 @@ class FuncionamientoActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_funcionamiento)
+        findViewById<View>(R.id.boton_volver).setOnClickListener { finish() }
 
         val switchPantalla = findViewById<Switch>(R.id.switch_pantalla)
         val switchNotificacion = findViewById<Switch>(R.id.switch_notificacion)

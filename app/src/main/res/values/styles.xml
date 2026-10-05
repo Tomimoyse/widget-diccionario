@@ -90,6 +90,15 @@
         <item name="android:focusable">true</item>
     </style>
 
+    <!-- Flecha para volver al inicio, en la esquina de la cabecera. -->
+    <style name="Boton.Volver" parent="">
+        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
     <!-- Fila de menú: texto a la izquierda, flecha a la derecha, línea debajo. -->
     <style name="Fila.Menu" parent="">
         <item name="android:background">?android:attr/selectableItemBackground</item>

@@ -7,7 +7,8 @@ vez que apagas la pantalla, así que al volver a encenderla ya tienes una nueva 
 
 - **Pantalla de inicio** con la palabra del momento, los botones «Otra palabra» y «Colección» y tres
   iconos, sin más texto: una mano entregando un «&» (compartir), una paleta de pintor (personalizar)
-  y un engranaje (funcionamiento).
+  y un engranaje (funcionamiento). Cada apartado tiene una flecha «←» arriba a la derecha para
+  volver al inicio.
 - **Widget** translúcido para la pantalla de inicio, con colores dinámicos del sistema. Al tocarlo
   muestra otra palabra.
 - **Colección**: la estrella del widget guarda la palabra que estás viendo, y la app tiene una

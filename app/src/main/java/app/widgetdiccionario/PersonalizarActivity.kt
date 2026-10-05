@@ -11,6 +11,7 @@ class PersonalizarActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_personalizar)
+        findViewById<View>(R.id.boton_volver).setOnClickListener { finish() }
         findViewById<View>(R.id.fila_estilo).setOnClickListener {
             startActivity(Intent(this, EstiloWidgetActivity::class.java))
         }

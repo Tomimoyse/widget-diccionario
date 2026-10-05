@@ -8,6 +8,7 @@
 
     <string name="main_palabra_del_momento">Palabra del momento</string>
     <string name="main_pie">Diccionario del español</string>
+    <string name="boton_volver">Volver al inicio</string>
     <string name="main_acceso_compartir">Compartir</string>
     <string name="main_acceso_personalizar">Personalizar</string>
     <string name="main_acceso_funcionamiento">Funcionamiento</string>

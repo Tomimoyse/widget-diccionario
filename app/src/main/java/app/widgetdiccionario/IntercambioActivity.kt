@@ -67,6 +67,7 @@ class IntercambioActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_intercambio)
+        findViewById<View>(R.id.boton_volver).setOnClickListener { finish() }
         findViewById<ListView>(R.id.lista_ofrecer).apply {
             adapter = adaptadorColeccion
             setOnItemClickListener { _, _, posicion, _ -> adaptadorColeccion.elegir(posicion) }

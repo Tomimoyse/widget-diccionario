@@ -192,4 +192,21 @@ class PantallasTest {
             }
         }
     }
+
+    @Test
+    fun laFlechaDeLaCabeceraVuelveAlInicio() {
+        for (pantalla in listOf(
+            PersonalizarActivity::class.java,
+            FuncionamientoActivity::class.java,
+            IntercambioActivity::class.java,
+        )) {
+            ActivityScenario.launch(pantalla).use { escenario ->
+                escenario.onActivity { actividad ->
+                    val volver = actividad.findViewById<View>(R.id.boton_volver)
+                    assertTrue(pantalla.simpleName, volver.performClick())
+                    assertTrue(pantalla.simpleName, actividad.isFinishing)
+                }
+            }
+        }
+    }
 }
